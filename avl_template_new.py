@@ -109,8 +109,13 @@ class AVLNode(object):
 		if self.value == None:
 			return False
 		return True
-
-
+	"""
+	@rtype: AVLNode
+	@returns: the right child of self, None if there is no right child
+	"""
+	def getPredecessor(self):
+		"TO DO: right the method"
+		return
 
 """
 A class implementing the ADT list, using an AVL tree.
@@ -135,9 +140,10 @@ class AVLTreeList(object):
 
 	def setMaxNode(self):
 		maxnode = self.root
-		while maxnode.right != None:
-			maxnode = maxnode.right
+		while maxnode.getRight != None:
+			maxnode = maxnode.getRight
 		self.maxnode = maxnode
+	
 	"""returns whether the list is empty
 
 	@rtype: bool
@@ -170,20 +176,21 @@ class AVLTreeList(object):
 	@returns: the number of rebalancing operation due to AVL rebalancing
 	"""
 	def insert(self, i, val):
+		insert_node = AVLNode(val)
 		if not(0 <= i <= self.size):
 			return "The intended index have to be between 0 and tree size"
 		if (i == self.size):
 			max_node = self.maxnode
-			max_node.right = AVLNode()
-		if self.root == None:
-			self.root == AVLNode((0, val))
-		else:
-			insert_rec(self.root, val)
-		return -1
-
-	def insert_rec(node, val):
-		return
-
+			max_node.right = insert_node
+		elif (i < self.size):
+			node_a = self.retrieve(i+1)
+			if node_a.left == None:
+				node_a.left = insert_node
+			else:
+				predecessor_node = node_a.getPredecessor()
+				predecessor_node.setRight = insert_node
+		
+		"TO DO: fix the tree"
 
 	"""deletes the i'th item in the list
 
