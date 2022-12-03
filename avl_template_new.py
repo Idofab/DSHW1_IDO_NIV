@@ -1,9 +1,8 @@
-#username - complete info
-#id1      - complete info 
-#name1    - complete info 
+#username - idofabian
+#id1      - 208604660 
+#name1    - Ido Fabian
 #id2      - 206170219
-#name2    - Niv Sagie Tenenbaum
-
+#name2    - Niv Sagie Tenenbaum  
 
 
 """A class represnting a node in an AVL tree"""
@@ -27,8 +26,7 @@ class AVLNode(object):
 	@returns: the left child of self, None if there is no left child
 	"""
 	def getLeft(self):
-		print("asdas")
-		return None
+		return self.left
 
 	"""returns the right child
 
@@ -36,8 +34,7 @@ class AVLNode(object):
 	@returns: the right child of self, None if there is no right child
 	"""
 	def getRight(self):
-		print("hey")
-		return None
+		return self.right
 
 	"""returns the parent 
 
@@ -85,7 +82,7 @@ class AVLNode(object):
 	@param node: a node
 	"""
 	def setParent(self, node):
-		return None
+		self.parent = node
 
 	"""sets value
 
@@ -109,7 +106,9 @@ class AVLNode(object):
 	@returns: False if self is a virtual node, True otherwise.
 	"""
 	def isRealNode(self):
-		return False
+		if self.value == None:
+			return False
+		return True
 
 
 
