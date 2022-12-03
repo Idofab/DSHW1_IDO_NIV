@@ -1,9 +1,8 @@
 #username - idofabian
 #id1      - 208604660 
 #name1    - Ido Fabian
-#id2      - complete info
-#name2    - complete info  
-
+#id2      - 206170219
+#name2    - Niv Sagie Tenenbaum  
 
 
 """A class represnting a node in an AVL tree"""
@@ -43,7 +42,7 @@ class AVLNode(object):
 	@returns: the parent of self, None if there is no parent
 	"""
 	def getParent(self):
-		return None
+		return self.parent
 
 	"""return the value
 
@@ -51,7 +50,7 @@ class AVLNode(object):
 	@returns: the value of self, None if the node is virtual
 	"""
 	def getValue(self):
-		return None
+		return self.value
 
 	"""returns the height
 
@@ -59,7 +58,7 @@ class AVLNode(object):
 	@returns: the height of self, -1 if the node is virtual
 	"""
 	def getHeight(self):
-		return -1
+		return self.height
 
 	"""sets left child
 
@@ -67,7 +66,7 @@ class AVLNode(object):
 	@param node: a node
 	"""
 	def setLeft(self, node):
-		return None
+		self.left = node
 
 	"""sets right child
 
@@ -75,7 +74,7 @@ class AVLNode(object):
 	@param node: a node
 	"""
 	def setRight(self, node):
-		return None
+		self.right = node
 
 	"""sets parent
 
@@ -91,7 +90,7 @@ class AVLNode(object):
 	@param value: data
 	"""
 	def setValue(self, value):
-		return None
+		self.value=value
 
 	"""sets the balance factor of the node
 
@@ -99,7 +98,7 @@ class AVLNode(object):
 	@param h: the height
 	"""
 	def setHeight(self, h):
-		return None
+		self.height = h
 
 	"""returns whether self is not a virtual node 
 
