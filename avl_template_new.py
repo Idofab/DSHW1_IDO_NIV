@@ -28,7 +28,8 @@ class AVLNode(object):
 	"""
 	def getLeft(self):
 		return None
-
+		
+	"TODO: remove comment"
 
 	"""returns the right child
 
