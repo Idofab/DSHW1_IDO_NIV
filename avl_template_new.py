@@ -125,16 +125,26 @@ class AVLTreeList(object):
 	def __init__(self):
 		self.size = 0
 		self.root = None
-		# add your fields here
+		self.maxnode = None
 
+	"""sets tree max node
 
+	@type TreeList: AVLTreeList
+	@param TreeList: a TreeList
+	"""
+
+	def setMaxNode(self):
+		maxnode = self.root
+		while maxnode.right != None:
+			maxnode = maxnode.right
+		self.maxnode = maxnode
 	"""returns whether the list is empty
 
 	@rtype: bool
 	@returns: True if the list is empty, False otherwise
 	"""
 	def empty(self):
-		return None
+		return (self.size == 0)
 
 
 	"""retrieves the value of the i'th item in the list
@@ -146,6 +156,7 @@ class AVLTreeList(object):
 	@returns: the the value of the i'th item in the list
 	"""
 	def retrieve(self, i):
+
 		return None
 
 	"""inserts val at position i in the list
@@ -159,7 +170,19 @@ class AVLTreeList(object):
 	@returns: the number of rebalancing operation due to AVL rebalancing
 	"""
 	def insert(self, i, val):
+		if not(0 <= i <= self.size):
+			return "The intended index have to be between 0 and tree size"
+		if (i == self.size):
+			max_node = self.maxnode
+			max_node.right = AVLNode()
+		if self.root == None:
+			self.root == AVLNode((0, val))
+		else:
+			insert_rec(self.root, val)
 		return -1
+
+	def insert_rec(node, val):
+		return
 
 
 	"""deletes the i'th item in the list
