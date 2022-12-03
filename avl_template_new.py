@@ -36,6 +36,7 @@ class AVLNode(object):
 	@returns: the right child of self, None if there is no right child
 	"""
 	def getRight(self):
+		print("hey")
 		return None
 
 	"""returns the parent 
