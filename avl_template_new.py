@@ -14,7 +14,7 @@ class AVLNode(object):
 	@param value: data of your node
 	"""
 	def __init__(self, value):
-		self.value = value # tuple. value[0]=index, value[1]=value
+		self.value = value
 		self.left = None
 		self.right = None
 		self.parent = None
@@ -234,7 +234,7 @@ class AVLTreeList(object):
 	@returns: the size of the list
 	"""
 	def length(self):
-		return None
+		return len(self.listToArray())
 
 	"""sort the info values of the list
 
@@ -280,7 +280,7 @@ class AVLTreeList(object):
 	@returns: the root, None if the list is empty
 	"""
 	def getRoot(self):
-		return None
+		return self.root
 
 
 	def leftRotate(father):
