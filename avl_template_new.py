@@ -14,7 +14,7 @@ class AVLNode(object):
 	@param value: data of your node
 	"""
 	def __init__(self, value):
-		self.value = value
+		self.value = value # tuple. value[0]=index, value[1]=value
 		self.left = None
 		self.right = None
 		self.parent = None
@@ -50,7 +50,7 @@ class AVLNode(object):
 	@returns: the value of self, None if the node is virtual
 	"""
 	def getValue(self):
-		return self.value
+		return self.value[1]
 
 	"""returns the height
 
@@ -90,7 +90,7 @@ class AVLNode(object):
 	@param value: data
 	"""
 	def setValue(self, value):
-		self.value=value
+		self.value[1] = value
 
 	"""sets the balance factor of the node
 
@@ -253,3 +253,29 @@ class AVLTreeList(object):
 		return None
 
 
+	def leftRotate(father):
+		#0      father
+		#  0    rightSon
+		#     0 rightGrandson
+		rightSon=father.right
+		rightGrandon = rightSon.right
+		father.right = rightSon.left
+		rightSon.left = father
+		#   0        rightSon
+		# 0   0  father    rightGrandson
+		father.height = father.left.height-father.right.height
+		rightSon.height = rightSon.left.height-rightSon.right.height
+
+
+	def rightRotate(father):
+		#     0  father
+		#   0    leftSon
+		# 0     leftGrandson
+		leftSon=father.left
+		leftGrandon = leftSon.right
+		father.left = leftSon.right
+		leftSon.right = father
+		#   0        leftSon
+		# 0   0  father    leftGrandson
+		father.height = father.left.height-father.right.height
+		leftSon.height = leftSon.left.height-leftSon.right.height
