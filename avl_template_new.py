@@ -115,7 +115,6 @@ class AVLNode(object):
 	def balanceFactor(self):
 		self.left.height - self.right.height
 
-=======
 	"""
 	@rtype: AVLNode
 	@returns: the right child of self, None if there is no right child
@@ -169,16 +168,76 @@ class AVLTreeList(object):
 	@rtype: str
 	@returns: the the value of the i'th item in the list
 	"""
+	def retrieve_rec(self, node, i):
+		
+		left_son = True
+		if (node.rank // 2 >= i):
+			new_node = node.left
+		else:
+			new_node = node.right
+			left_son = False
+			
+		if(left_son):
+			if(new_node.rank == i):
+				return new_node.value
+			else:
+				return self.retrieve_rec(new_node, i)
+				
+		else:
+			if(node.left.rank + 1 == i):
+				return new_node.value
+			else:
+				return self.retrieve_rec(new_node, i - (node.left.rank + 1))
+	
 	def retrieve(self, i):
-		if not(0 <= i < self.size()):
+		if not(0 <= i < self.size):
 			return None
 
 		cur_node = self.root
-		if(cur_node.rank == i-1):
+		if(cur_node.left.rank == i):
 			return cur_node.value
-		elif(i < cur_node.rank):
-			cur_node = cur_node.left
-		return None
+	
+		return self.retrieve_rec(cur_node, i)
+	
+	"""retrieves the node of the i'th item in the tree
+
+	@type i: int
+	@pre: 0 <= i < self.length()
+	@param i: index in the list
+	@rtype: AVLNode
+	@returns: the the node of the i'th item in the tree
+	"""
+
+	def retrieve_node(self, i):
+		if not(0 <= i < self.size):
+			return None
+
+		cur_node = self.root
+		if(cur_node.left.rank == i):
+			return cur_node
+		
+		return self.retrieve_node_rec(cur_node, i)
+
+	def retrieve_node_rec(self, node, i):
+		left_son = True
+		if (node.rank // 2 >= i):
+			new_node = node.left
+		else:
+			new_node = node.right
+			left_son = False
+			
+		if(left_son):
+			if(new_node.rank == i):
+				return new_node
+			else:
+				return self.retrieve_node_rec(new_node, i)
+				
+		else:
+			if(node.left.rank + 1 == i):
+				return new_node
+			else:
+				return self.retrieve_node_rec(new_node, i - (node.left.rank + 1))
+
 
 	"""inserts val at position i in the list
 
@@ -192,19 +251,22 @@ class AVLTreeList(object):
 	"""
 	def insert(self, i, val):
 		insert_node = AVLNode(val)
+		insert_node.left = self.virtual_node(insert_node)
+		insert_node.right = self.virtual_node(insert_node)
 		self.size += 1
+		
 		if not(0 <= i <= self.size):
 			return "The intended index have to be between 0 and tree size"
 		
 		if(self.root == None):
 			self.root = insert_node
-		
+
 		elif (i == self.size):
 			max_node = self.maxnode()
 			max_node.right = insert_node
 		
 		elif (i < self.size):
-			node_a = self.retrieve(i)
+			node_a = self.retrieve_node(i)
 			if (node_a.left == None):
 				node_a.left = insert_node
 			else:
@@ -346,4 +408,9 @@ class AVLTreeList(object):
 			else: #left then right
 				father.left.leftRotate()
 				father.rightRotate()
-
+	
+	def virtual_node(self, father):
+		node = AVLNode("")
+		node.rank = 0
+		node.parent = father
+		return node
