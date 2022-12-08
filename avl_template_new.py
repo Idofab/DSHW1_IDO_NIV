@@ -431,6 +431,7 @@ class AVLTreeList(object):
 				father.rightRotate()
 			if(insert):
 				return
+		
 		self.fixTree(father.parent, insert)
 	
 	def virtual_node(self, father):
