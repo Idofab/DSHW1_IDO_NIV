@@ -165,11 +165,12 @@ class AVLTreeList(object):
 	def retrieve(self, i):
 		if not(0 <= i < self.size()):
 			return None
+
 		cur_node = self.root
 		if(cur_node.rank == i-1):
 			return cur_node.value
 		elif(i < cur_node.rank):
-			
+			cur_node = cur_node.left
 		return None
 
 	"""inserts val at position i in the list
@@ -192,7 +193,7 @@ class AVLTreeList(object):
 			self.root = insert_node
 		
 		elif (i == self.size):
-			max_node = self.maxnode
+			max_node = self.maxnode()
 			max_node.right = insert_node
 		
 		elif (i < self.size):
