@@ -18,7 +18,8 @@ class AVLNode(object):
 		self.left = None
 		self.right = None
 		self.parent = None
-		self.height = -1 # Balance factor
+		self.height = -1
+		self.rank = 1
 		
 
 	"""returns the left child
@@ -50,7 +51,7 @@ class AVLNode(object):
 	@returns: the value of self, None if the node is virtual
 	"""
 	def getValue(self):
-		return self.value[1]
+		return self.value
 
 	"""returns the height
 
@@ -90,7 +91,7 @@ class AVLNode(object):
 	@param value: data
 	"""
 	def setValue(self, value):
-		self.value[1] = value
+		self.value = value
 
 	"""sets the balance factor of the node
 
@@ -110,8 +111,18 @@ class AVLNode(object):
 			return False
 		return True
 
+
 	def balanceFactor(self):
 		self.left.height - self.right.height
+
+=======
+	"""
+	@rtype: AVLNode
+	@returns: the right child of self, None if there is no right child
+	"""
+	def getPredecessor(self):
+		"TO DO: right the method"
+		return
 
 
 """
@@ -127,16 +138,27 @@ class AVLTreeList(object):
 	def __init__(self):
 		self.size = 0
 		self.root = None
-		# add your fields here
+		self.maxnode = None
 
+	"""sets tree max node
 
+	@type TreeList: AVLTreeList
+	@param TreeList: a TreeList
+	"""
+
+	def setMaxNode(self):
+		maxnode = self.root
+		while maxnode.getRight != None:
+			maxnode = maxnode.getRight
+		self.maxnode = maxnode
+	
 	"""returns whether the list is empty
 
 	@rtype: bool
 	@returns: True if the list is empty, False otherwise
 	"""
 	def empty(self):
-		return None
+		return (self.size == 0)
 
 
 	"""retrieves the value of the i'th item in the list
@@ -148,6 +170,13 @@ class AVLTreeList(object):
 	@returns: the the value of the i'th item in the list
 	"""
 	def retrieve(self, i):
+		if not(0 <= i < self.size()):
+			return None
+		cur_node = self.root
+		if(cur_node.rank == i-1):
+			return cur_node.value
+		elif(i < cur_node.rank):
+			
 		return None
 
 	"""inserts val at position i in the list
@@ -161,8 +190,28 @@ class AVLTreeList(object):
 	@returns: the number of rebalancing operation due to AVL rebalancing
 	"""
 	def insert(self, i, val):
-		return -1
-
+		insert_node = AVLNode(val)
+		self.size += 1
+		if not(0 <= i <= self.size):
+			return "The intended index have to be between 0 and tree size"
+		
+		if(self.root == None):
+			self.root = insert_node
+		
+		elif (i == self.size):
+			max_node = self.maxnode
+			max_node.right = insert_node
+		
+		elif (i < self.size):
+			node_a = self.retrieve(i)
+			if (node_a.left == None):
+				node_a.left = insert_node
+			else:
+				predecessor_node = node_a.getPredecessor()
+				predecessor_node.setRight = insert_node
+		
+		"TO DO: fix the tree"
+		return
 
 	"""deletes the i'th item in the list
 
