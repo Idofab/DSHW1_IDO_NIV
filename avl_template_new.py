@@ -13,7 +13,7 @@ class AVLNode(object):
 	@type value: str
 	@param value: data of your node
 	"""
-	def __init__(self, value):
+	def __init__(self, value=""):
 		self.value = value
 		self.left = None
 		self.right = None
@@ -431,10 +431,11 @@ class AVLTreeList(object):
 				father.rightRotate()
 			if(insert):
 				return
+		
 		self.fixTree(father.parent, insert)
 	
 	def virtual_node(self, father):
-		node = AVLNode("")
+		node = AVLNode()
 		node.rank = 0
 		node.parent = father
 		return node
