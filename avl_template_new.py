@@ -110,6 +110,12 @@ class AVLNode(object):
 		if self.value == None:
 			return False
 		return True
+
+
+	def balanceFactor(self):
+		self.left.height - self.right.height
+
+=======
 	"""
 	@rtype: AVLNode
 	@returns: the right child of self, None if there is no right child
@@ -117,6 +123,7 @@ class AVLNode(object):
 	def getPredecessor(self):
 		"TO DO: right the method"
 		return
+
 
 """
 A class implementing the ADT list, using an AVL tree.
@@ -302,7 +309,6 @@ class AVLTreeList(object):
 		#  0    rightSon
 		#     0 rightGrandson
 		rightSon=father.right
-		rightGrandon = rightSon.right
 		father.right = rightSon.left
 		rightSon.left = father
 		#   0        rightSon
@@ -316,10 +322,27 @@ class AVLTreeList(object):
 		#   0    leftSon
 		# 0     leftGrandson
 		leftSon=father.left
-		leftGrandon = leftSon.right
 		father.left = leftSon.right
 		leftSon.right = father
 		#   0        leftSon
 		# 0   0  father    leftGrandson
-		father.height = father.left.height-father.right.height
-		leftSon.height = leftSon.left.height-leftSon.right.height
+		father.height = max(father.left.height, father.right.height)+1
+		leftSon.height =max(leftSon.left.height, leftSon.right.height)+1
+		father.rank = father.left.rank+father.right.rank+1
+		leftSon.rank = leftSon.left.rank + leftSon.right.rank+1
+
+	def fixTree(father):
+		balanceFactor= father.balanceFactor()
+		if balanceFactor < -1:
+			if father.right.balanceFactor() == -1: #left
+				father.leftRotate()
+			else: #right then left
+				father.right.rightRotate()
+				father.leftRotate()
+		elif balanceFactor > 1:
+			if father.left.balanceFactor() == 1: #right
+				father.rightRotate()
+			else: #left then right
+				father.left.leftRotate()
+				father.rightRotate()
+
