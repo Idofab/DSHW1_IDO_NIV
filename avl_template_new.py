@@ -68,6 +68,10 @@ class AVLNode(object):
 	"""
 	def setLeft(self, node):
 		self.left = node
+		node.setParent(self)
+		node.getParent().setHeight(node.getHeight() + 1)
+
+
 
 	"""sets right child
 
@@ -76,6 +80,8 @@ class AVLNode(object):
 	"""
 	def setRight(self, node):
 		self.right = node
+		node.setParent(self)
+		node.getParent().setHeight(node.getHeight() + 1)
 
 	"""sets parent
 
@@ -84,6 +90,7 @@ class AVLNode(object):
 	"""
 	def setParent(self, node):
 		self.parent = node
+
 
 	"""sets value
 
@@ -111,18 +118,49 @@ class AVLNode(object):
 			return False
 		return True
 
-
-	def balanceFactor(self):
-		self.left.height - self.right.height
-
 	"""
 	@rtype: AVLNode
 	@returns: the right child of self, None if there is no right child
 	"""
 	def getPredecessor(self):
-		"TO DO: right the method"
-		return
+		node = self.left
+		while(node.right.rank != 0):
+			node = node.gerLeft()
+		
+		while(node.right.rank != 0):
+			node = node.getRight()
 
+		return node
+	
+	def balanceFactor(self):
+		return self.getLeft().getHeight() - self.getRight().getHeight()
+	
+	def leftRotate(father):
+		#0      father
+		#  0    rightSon
+		#     0 rightGrandson
+		rightSon= father.getRight()
+		father.right= rightSon.getLeft()
+		rightSon.setLeft(father)
+		#   0        rightSon
+		# 0   0  father    rightGrandson
+		father.setHeight(father.left.getHeight() - father.right.getHeight())
+		rightSon.setHeight(rightSon.getLeft().getHeight() - rightSon.getRight().getHeight())
+
+
+	def rightRotate(father):
+		#     0  father
+		#   0    leftSon
+		# 0     leftGrandson
+		leftSon= father.getLeft()
+		father.left = leftSon.getRight()
+		leftSon.setRight(father)
+		#   0        leftSon
+		# 0   0  father    leftGrandson
+		father.setHeight(max(father.left.height, father.right.height)+1)
+		leftSon.height =max(leftSon.left.height, leftSon.right.height)+1
+		father.rank = father.left.rank+father.right.rank+1
+		leftSon.rank = leftSon.left.rank + leftSon.right.rank+1
 
 """
 A class implementing the ADT list, using an AVL tree.
@@ -238,7 +276,6 @@ class AVLTreeList(object):
 			else:
 				return self.retrieve_node_rec(new_node, i - (node.left.rank + 1))
 
-
 	"""inserts val at position i in the list
 
 	@type i: int
@@ -251,8 +288,9 @@ class AVLTreeList(object):
 	"""
 	def insert(self, i, val):
 		insert_node = AVLNode(val)
-		insert_node.left = self.virtual_node(insert_node)
-		insert_node.right = self.virtual_node(insert_node)
+		insert_node.setLeft(self.virtual_node(insert_node))
+		insert_node.setRight(self.virtual_node(insert_node))
+		insert_node.setHeight(0)
 		self.size += 1
 		
 		if not(0 <= i <= self.size):
@@ -260,20 +298,21 @@ class AVLTreeList(object):
 		
 		if(self.root == None):
 			self.root = insert_node
+			self.maxnode = insert_node
 
 		elif (i == self.size):
-			max_node = self.maxnode()
-			max_node.right = insert_node
+			max_node = self.maxnode
+			max_node.setRight(insert_node)
 		
 		elif (i < self.size):
 			node_a = self.retrieve_node(i)
-			if (node_a.left == None):
-				node_a.left = insert_node
+			if (node_a.left.rank == 0):
+				node_a.setLeft(insert_node)
 			else:
 				predecessor_node = node_a.getPredecessor()
-				predecessor_node.setRight = insert_node
+				predecessor_node.setRight(insert_node)
 		
-		"TO DO: fix the tree"
+		self.fixTree(insert_node.parent, True)
 		return
 
 	"""deletes the i'th item in the list
@@ -367,47 +406,32 @@ class AVLTreeList(object):
 		return self.root
 
 
-	def leftRotate(father):
-		#0      father
-		#  0    rightSon
-		#     0 rightGrandson
-		rightSon=father.right
-		father.right = rightSon.left
-		rightSon.left = father
-		#   0        rightSon
-		# 0   0  father    rightGrandson
-		father.height = father.left.height-father.right.height
-		rightSon.height = rightSon.left.height-rightSon.right.height
 
+	def fixTree(self, father, insert):
+		if(father == None):
+			return
+		balanceFactor = father.balanceFactor()
+		if (-1 <= balanceFactor <= 1):
+			self.fixTree(father.parent, insert)
+			return
 
-	def rightRotate(father):
-		#     0  father
-		#   0    leftSon
-		# 0     leftGrandson
-		leftSon=father.left
-		father.left = leftSon.right
-		leftSon.right = father
-		#   0        leftSon
-		# 0   0  father    leftGrandson
-		father.height = max(father.left.height, father.right.height)+1
-		leftSon.height =max(leftSon.left.height, leftSon.right.height)+1
-		father.rank = father.left.rank+father.right.rank+1
-		leftSon.rank = leftSon.left.rank + leftSon.right.rank+1
-
-	def fixTree(father):
-		balanceFactor= father.balanceFactor()
 		if balanceFactor < -1:
 			if father.right.balanceFactor() == -1: #left
 				father.leftRotate()
 			else: #right then left
 				father.right.rightRotate()
 				father.leftRotate()
+			if(insert):
+				return
 		elif balanceFactor > 1:
 			if father.left.balanceFactor() == 1: #right
 				father.rightRotate()
 			else: #left then right
 				father.left.leftRotate()
 				father.rightRotate()
+			if(insert):
+				return
+		self.fixTree(father.parent, insert)
 	
 	def virtual_node(self, father):
 		node = AVLNode("")
