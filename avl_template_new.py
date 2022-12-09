@@ -19,8 +19,7 @@ class AVLNode(object):
 		self.right = None
 		self.parent = None
 		self.height = -1
-		self.rank = 1
-		
+		self.rank = 1	
 
 	"""returns the left child
 	@rtype: AVLNode
@@ -70,8 +69,6 @@ class AVLNode(object):
 		self.left = node
 		node.setParent(self)
 		node.getParent().setHeight(node.getHeight() + 1)
-
-
 
 	"""sets right child
 
@@ -140,8 +137,13 @@ class AVLNode(object):
 		#  0    rightSon
 		#     0 rightGrandson
 		rightSon= father.getRight()
-		father.right= rightSon.getLeft()
+		father_parent= father.getParent()
+		father.setRight(rightSon.getLeft())
 		rightSon.setLeft(father)
+		if(father_parent == None):
+			rightSon.setParent(None)
+		else:
+			father_parent.setLeft(rightSon)
 		#   0        rightSon
 		# 0   0  father    rightGrandson
 		father.setHeight(father.left.getHeight() - father.right.getHeight())
@@ -153,13 +155,16 @@ class AVLNode(object):
 		#   0    leftSon
 		# 0     leftGrandson
 		leftSon= father.getLeft()
-		father.left = leftSon.getRight()
+		father_parent= father.getParent()
+		father.setLeft(leftSon.getRight())
 		leftSon.setRight(father)
+		if(father_parent == None):
+			leftSon.setParent(None)
+		else:
+			father_parent.setRight(leftSon)
 		#   0        leftSon
 		# 0   0  father    leftGrandson
-		father.setHeight(max(father.left.height, father.right.height)+1)
-		leftSon.height =max(leftSon.left.height, leftSon.right.height)+1
-		father.rank = father.left.rank+father.right.rank+1
+		leftSon.setHeight(max(leftSon.getLeft().getHeight(), leftSon.getRight().getHeight()) + 1)
 		leftSon.rank = leftSon.left.rank + leftSon.right.rank+1
 
 """
@@ -204,7 +209,7 @@ class AVLTreeList(object):
 	@pre: 0 <= i < self.length()
 	@param i: index in the list
 	@rtype: str
-	@returns: the the value of the i'th item in the list
+	@returns: the value of the i'th item in the list
 	"""
 	def retrieve_rec(self, node, i):
 		
@@ -243,7 +248,7 @@ class AVLTreeList(object):
 	@pre: 0 <= i < self.length()
 	@param i: index in the list
 	@rtype: AVLNode
-	@returns: the the node of the i'th item in the tree
+	@returns: the node of the i'th item in the tree
 	"""
 
 	def retrieve_node(self, i):
@@ -291,7 +296,6 @@ class AVLTreeList(object):
 		insert_node.setLeft(self.virtual_node(insert_node))
 		insert_node.setRight(self.virtual_node(insert_node))
 		insert_node.setHeight(0)
-		self.size += 1
 		
 		if not(0 <= i <= self.size):
 			return "The intended index have to be between 0 and tree size"
@@ -312,7 +316,9 @@ class AVLTreeList(object):
 				predecessor_node = node_a.getPredecessor()
 				predecessor_node.setRight(insert_node)
 		
+		self.size += 1
 		self.fixTree(insert_node.parent, True)
+
 		return
 
 	"""deletes the i'th item in the list
@@ -405,15 +411,12 @@ class AVLTreeList(object):
 	def getRoot(self):
 		return self.root
 
-
-
 	def fixTree(self, father, insert):
 		if(father == None):
 			return
 		balanceFactor = father.balanceFactor()
 		if (-1 <= balanceFactor <= 1):
 			self.fixTree(father.parent, insert)
-			return
 
 		if balanceFactor < -1:
 			if father.right.balanceFactor() == -1: #left
@@ -421,17 +424,21 @@ class AVLTreeList(object):
 			else: #right then left
 				father.right.rightRotate()
 				father.leftRotate()
-			if(insert):
-				return
+
 		elif balanceFactor > 1:
-			if father.left.balanceFactor() == 1: #right
+			if father.getLeft().balanceFactor() == 1: #right
 				father.rightRotate()
 			else: #left then right
-				father.left.leftRotate()
+				father.getLeft().leftRotate()
 				father.rightRotate()
-			if(insert):
-				return
 		
+		father.setHeight(max(father.getLeft().getHeight(), father.getRight().getHeight()) + 1)
+		father.rank = father.left.rank+father.right.rank+1
+
+		
+		if(father.parent == None):
+			self.root = father
+			return
 		self.fixTree(father.parent, insert)
 	
 	def virtual_node(self, father):
