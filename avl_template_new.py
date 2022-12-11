@@ -211,36 +211,38 @@ class AVLTreeList(object):
 	@rtype: str
 	@returns: the value of the i'th item in the list
 	"""
-	def retrieve_rec(self, node, i):
+	def retrieve_val_rec(self, node, i):
 		
 		left_son = True
-		if (node.rank // 2 >= i):
-			new_node = node.left
+		if (node.rank // 2 > i):
+			next_node = node.getLeft()
 		else:
-			new_node = node.right
+			next_node = node.getRight()
 			left_son = False
 			
 		if(left_son):
-			if(new_node.rank == i):
-				return new_node.value
+			if(((node.rank == 1) and (i == 0)) or ((node.rank == 2) and (i == 1))):
+				return node.value
+			elif(i == (next_node.rank - 1 - next_node.getLeft().rank)):
+				return next_node.value
 			else:
-				return self.retrieve_rec(new_node, i)
+				return self.retrieve_val_rec(next_node, i)
 				
 		else:
-			if(node.left.rank + 1 == i):
-				return new_node.value
+			if(node.getLeft().rank + 1 == i):
+				return next_node.value
 			else:
-				return self.retrieve_rec(new_node, i - (node.left.rank + 1))
+				return self.retrieve_val_rec(next_node, i - (node.left.rank + 1))
 	
 	def retrieve(self, i):
 		if not(0 <= i < self.size):
 			return None
 
-		cur_node = self.root
-		if(cur_node.left.rank == i):
-			return cur_node.value
+		
+		if(self.root.getLeft().rank == i):
+			return self.root.value
 	
-		return self.retrieve_rec(cur_node, i)
+		return self.retrieve_val_rec(self.root, i)
 	
 	"""retrieves the node of the i'th item in the tree
 
@@ -255,31 +257,32 @@ class AVLTreeList(object):
 		if not(0 <= i < self.size):
 			return None
 
-		cur_node = self.root
-		if(cur_node.left.rank == i):
-			return cur_node
+		if(self.root.getLeft().rank == i):
+			return self.root
 		
-		return self.retrieve_node_rec(cur_node, i)
+		return self.retrieve_node_rec(self.root, i)
 
 	def retrieve_node_rec(self, node, i):
 		left_son = True
-		if (node.rank // 2 >= i):
-			new_node = node.left
+		if (node.rank // 2 > i):
+			next_node = node.getLeft()
 		else:
-			new_node = node.right
+			next_node = node.getRight()
 			left_son = False
 			
 		if(left_son):
-			if(new_node.rank == i):
-				return new_node
+			if(((node.rank == 1) and (i == 0)) or ((node.rank == 2) and (i == 1))):
+				return node
+			elif(i == (next_node.rank - 1 - next_node.getLeft().rank)):
+				return next_node
 			else:
-				return self.retrieve_node_rec(new_node, i)
+				return self.retrieve_node_rec(next_node, i)
 				
 		else:
-			if(node.left.rank + 1 == i):
-				return new_node
+			if(node.getLeft().rank == i):
+				return node
 			else:
-				return self.retrieve_node_rec(new_node, i - (node.left.rank + 1))
+				return self.retrieve_node_rec(next_node, i - (node.getLeft().rank + 1))
 
 	"""inserts val at position i in the list
 
@@ -339,6 +342,8 @@ class AVLTreeList(object):
 	@returns: the value of the first item, None if the list is empty
 	"""
 	def first(self):
+		if not(self.empty()):
+			return self.retrieve(0)
 		return None
 
 	"""returns the value of the last item in the list
@@ -347,6 +352,8 @@ class AVLTreeList(object):
 	@returns: the value of the last item, None if the list is empty
 	"""
 	def last(self):
+		if not(self.empty()):
+			return self.retrieve(self.size - 1)
 		return None
 
 	"""returns an array representing list 
@@ -363,7 +370,7 @@ class AVLTreeList(object):
 	@returns: the size of the list
 	"""
 	def length(self):
-		return len(self.listToArray())
+		return self.size - 1
 
 	"""sort the info values of the list
 
