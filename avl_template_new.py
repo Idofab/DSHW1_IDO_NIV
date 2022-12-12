@@ -4,7 +4,6 @@
 #id2      - 206170219
 #name2    - Niv Sagie Tenenbaum  
 
-
 """A class represnting a node in an AVL tree"""
 
 class AVLNode(object):
@@ -88,7 +87,6 @@ class AVLNode(object):
 	def setParent(self, node):
 		self.parent = node
 
-
 	"""sets value
 
 	@type value: str
@@ -120,14 +118,30 @@ class AVLNode(object):
 	@returns: the right child of self, None if there is no right child
 	"""
 	def getPredecessor(self):
-		node = self.left
-		while(node.right.rank != 0):
-			node = node.gerLeft()
+		if(self.getParent() == None) and (self.getLeft().rank == 0):
+			return None
 		
-		while(node.right.rank != 0):
-			node = node.getRight()
+		if((self.rank == 1) and (self.getParent().getRight() == self)):
+			return self.getParent()
+		
+		if((self.rank == 1) and (self.getParent().getLeft() == self)):
+			parent_node = self.getParent()
+			while((parent_node.getParent().getLeft() == parent_node)):
+				parent_node = parent_node.getParent()
+			return parent_node.getParent()
 
-		return node
+	
+		if(self.getLeft().rank != 0):
+			node = self.getLeft()
+			
+			while(node.getRight().rank == 0 and node.getLeft().rank != 0):
+				node = node.getLeft()
+			
+			while(node.getRight().rank != 0):
+				node = node.getRight()
+
+			return node
+
 	
 	def balanceFactor(self):
 		return self.getLeft().getHeight() - self.getRight().getHeight()
@@ -211,29 +225,6 @@ class AVLTreeList(object):
 	@rtype: str
 	@returns: the value of the i'th item in the list
 	"""
-	def retrieve_val_rec(self, node, i):
-		
-		left_son = True
-		if (node.rank // 2 > i):
-			next_node = node.getLeft()
-		else:
-			next_node = node.getRight()
-			left_son = False
-			
-		if(left_son):
-			if(((node.rank == 1) and (i == 0)) or ((node.rank == 2) and (i == 1))):
-				return node.value
-			elif(i == (next_node.rank - 1 - next_node.getLeft().rank)):
-				return next_node.value
-			else:
-				return self.retrieve_val_rec(next_node, i)
-				
-		else:
-			if(node.getLeft().rank + 1 == i):
-				return next_node.value
-			else:
-				return self.retrieve_val_rec(next_node, i - (node.left.rank + 1))
-	
 	def retrieve(self, i):
 		if not(0 <= i < self.size):
 			return None
@@ -242,7 +233,7 @@ class AVLTreeList(object):
 		if(self.root.getLeft().rank == i):
 			return self.root.value
 	
-		return self.retrieve_val_rec(self.root, i)
+		return self.retrieve_node_rec(self.root, i).value
 	
 	"""retrieves the node of the i'th item in the tree
 
@@ -263,26 +254,30 @@ class AVLTreeList(object):
 		return self.retrieve_node_rec(self.root, i)
 
 	def retrieve_node_rec(self, node, i):
+		print("retrive: ",node.value)
 		left_son = True
 		if (node.rank // 2 > i):
 			next_node = node.getLeft()
 		else:
 			next_node = node.getRight()
 			left_son = False
-			
-		if(left_son):
-			if(((node.rank == 1) and (i == 0)) or ((node.rank == 2) and (i == 1))):
+		print("retrive nwxt: ", next_node)	
+		if(left_son):														
+			if(next_node.rank == i):
 				return node
-			elif(i == (next_node.rank - 1 - next_node.getLeft().rank)):
+
+			elif(i == (next_node.rank - next_node.getLeft().rank)):
 				return next_node
+   
 			else:
 				return self.retrieve_node_rec(next_node, i)
 				
 		else:
-			if(node.getLeft().rank == i):
-				return node
+			if(node.getLeft().rank + next_node.getLeft().rank + 1 == i):
+				return next_node
 			else:
-				return self.retrieve_node_rec(next_node, i - (node.getLeft().rank + 1))
+				return self.retrieve_node_rec(next_node, i - (node.left.rank + 1))
+	
 
 	"""inserts val at position i in the list
 
@@ -313,14 +308,18 @@ class AVLTreeList(object):
 		
 		elif (i < self.size):
 			node_a = self.retrieve_node(i)
-			if (node_a.left.rank == 0):
+			if (node_a.getLeft().rank == 0):
 				node_a.setLeft(insert_node)
 			else:
 				predecessor_node = node_a.getPredecessor()
 				predecessor_node.setRight(insert_node)
 		
 		self.size += 1
+		self.print_tree(self.root)
 		self.fixTree(insert_node.parent, True)
+		print('After fix')
+		self.print_tree(self.root)
+
 
 		return
 
@@ -453,3 +452,15 @@ class AVLTreeList(object):
 		node.rank = 0
 		node.parent = father
 		return node
+	
+	def print_tree(self, node):
+		if (node.height > 0):
+			print("value:",node.value)
+		if(node != None and node.left.rank != 0):
+			print("left:", node.left.value)
+		if(node != None and node.right.rank != 0):
+			print("right:", node.right.value)
+		if(node != None and node.left.rank != 0):
+			self.print_tree(node.left)
+		if(node != None and node.right.rank != 0):
+			self.print_tree(node.right)
