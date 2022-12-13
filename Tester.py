@@ -23,7 +23,7 @@ for i, val in enumerate(avl_list):
 	# print_tree(avl_tree.root)
 	print(i , "--------------------------------------")
 	avl_tree.insert(0, val)
-
+print(f'--final tree--')
 print_tree(avl_tree.root)
 
 # Retrive test

@@ -254,30 +254,11 @@ class AVLTreeList(object):
 		return self.retrieve_node_rec(self.root, i)
 
 	def retrieve_node_rec(self, node, i):
-		print("retrive: ",node.value)
-		left_son = True
-		if (node.rank // 2 > i):
-			next_node = node.getLeft()
-		else:
-			next_node = node.getRight()
-			left_son = False
-		print("retrive nwxt: ", next_node)	
-		if(left_son):														
-			if(next_node.rank == i):
-				return node
-
-			elif(i == (next_node.rank - next_node.getLeft().rank)):
-				return next_node
-   
-			else:
-				return self.retrieve_node_rec(next_node, i)
-				
-		else:
-			if(node.getLeft().rank + next_node.getLeft().rank + 1 == i):
-				return next_node
-			else:
-				return self.retrieve_node_rec(next_node, i - (node.left.rank + 1))
-	
+		if node.getLeft().rank == i:
+			return node
+		if i < node.rank//2:
+			return self.retrieve_node_rec(node.getLeft(), i)
+		return self.retrieve_node_rec(node.getRight(), i-node.getLeft().rank-1)
 
 	"""inserts val at position i in the list
 
@@ -315,10 +296,10 @@ class AVLTreeList(object):
 				predecessor_node.setRight(insert_node)
 		
 		self.size += 1
-		self.print_tree(self.root)
+		# self.print_tree(self.root)
 		self.fixTree(insert_node.parent, True)
-		print('After fix')
-		self.print_tree(self.root)
+		# print('After fix')
+		# self.print_tree(self.root)
 
 
 		return
