@@ -115,33 +115,26 @@ class AVLNode(object):
 
 	"""
 	@rtype: AVLNode
-	@returns: the right child of self, None if there is no right child
+	@returns: the predecesso of self
 	"""
 	def getPredecessor(self):
 		if(self.getParent() == None) and (self.getLeft().rank == 0):
 			return None
 		
-		if((self.rank == 1) and (self.getParent().getRight() == self)):
+		if(self.getLeft().rank != 0):
+			predecessor_node = self.getLeft()
+			while(predecessor_node.getRight().rank != 0):
+				predecessor_node = predecessor_node.getRight()
+			return predecessor_node
+
+		elif((self.getLeft().rank == 0) and (self.getParent().getRight() == self)):
 			return self.getParent()
 		
-		if((self.rank == 1) and (self.getParent().getLeft() == self)):
-			parent_node = self.getParent()
-			while((parent_node.getParent().getLeft() == parent_node)):
-				parent_node = parent_node.getParent()
-			return parent_node.getParent()
-
-	
-		if(self.getLeft().rank != 0):
-			node = self.getLeft()
-			
-			while(node.getRight().rank == 0 and node.getLeft().rank != 0):
-				node = node.getLeft()
-			
-			while(node.getRight().rank != 0):
-				node = node.getRight()
-
-			return node
-
+		elif(self.getParent().getLeft() == self):
+			predecessor_node = self.getParent()
+			while((predecessor_node.getParent().getLeft() == predecessor_node)):
+				predecessor_node = predecessor_node.getParent()
+			return predecessor_node.getParent()
 	
 	def balanceFactor(self):
 		return self.getLeft().getHeight() - self.getRight().getHeight()
@@ -157,7 +150,10 @@ class AVLNode(object):
 		if(father_parent == None):
 			rightSon.setParent(None)
 		else:
-			father_parent.setLeft(rightSon)
+			if father_parent.getRight().value == father.value:
+				father_parent.setRight(rightSon)
+			else:
+				father_parent.setLeft(rightSon)
 		#   0        rightSon
 		# 0   0  father    rightGrandson
 		father.setHeight(father.left.getHeight() - father.right.getHeight())
@@ -165,9 +161,9 @@ class AVLNode(object):
 
 
 	def rightRotate(father):
-		#     0  father
-		#   0    leftSon
-		# 0     leftGrandson
+		#     3  father
+		#   2    leftSon
+		# 1     leftGrandson
 		leftSon= father.getLeft()
 		father_parent= father.getParent()
 		father.setLeft(leftSon.getRight())
@@ -175,9 +171,12 @@ class AVLNode(object):
 		if(father_parent == None):
 			leftSon.setParent(None)
 		else:
-			father_parent.setRight(leftSon)
-		#   0        leftSon
-		# 0   0  father    leftGrandson
+			if father_parent.getRight().value == father.value:
+				father_parent.setRight(leftSon)
+			else:
+				father_parent.setLeft(leftSon)
+		#   2               leftSon
+		# 1   3  leftGrandson     father
 		leftSon.setHeight(max(leftSon.getLeft().getHeight(), leftSon.getRight().getHeight()) + 1)
 		leftSon.rank = leftSon.left.rank + leftSon.right.rank+1
 
@@ -204,8 +203,8 @@ class AVLTreeList(object):
 
 	def setMaxNode(self):
 		maxnode = self.root
-		while maxnode.getRight != None:
-			maxnode = maxnode.getRight
+		while maxnode.getRight() != None:
+			maxnode = maxnode.getRight()
 		self.maxnode = maxnode
 	
 	"""returns whether the list is empty
@@ -284,8 +283,8 @@ class AVLTreeList(object):
 			self.maxnode = insert_node
 
 		elif (i == self.size):
-			max_node = self.maxnode
-			max_node.setRight(insert_node)
+			self.maxnode.setRight(insert_node)
+			self.maxnode = insert_node
 		
 		elif (i < self.size):
 			node_a = self.retrieve_node(i)
