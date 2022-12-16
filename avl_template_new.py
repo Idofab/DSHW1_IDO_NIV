@@ -136,6 +136,26 @@ class AVLNode(object):
 				predecessor_node = predecessor_node.getParent()
 			return predecessor_node.getParent()
 	
+	def getSuccessor(self):
+
+		if(self.getParent() == None) and (self.getRight().rank == 0):
+			return None
+	
+		if(self.getRight().rank != 0):
+			successor_node = self.getRight()
+			while(successor_node.getLeft().rank != 0):
+				successor_node = successor_node.getLeft()
+			return successor_node
+
+		elif((self.getRight().rank == 0) and (self.getParent().getLeft() == self)):
+			return self.getParent()
+		
+		elif(self.getParent().getRight() == self):
+			successor_node = self.getParent()
+			while((successor_node.getParent().getRight() == successor_node)):
+				successor_node = successor_node.getParent()
+			return successor_node.getParent()
+	
 	def balanceFactor(self):
 		return self.getLeft().getHeight() - self.getRight().getHeight()
 	
@@ -255,7 +275,7 @@ class AVLTreeList(object):
 	def retrieve_node_rec(self, node, i):
 		if node.getLeft().rank == i:
 			return node
-		if i < node.rank//2:
+		if i < node.getLeft().rank:
 			return self.retrieve_node_rec(node.getLeft(), i)
 		return self.retrieve_node_rec(node.getRight(), i-node.getLeft().rank-1)
 
@@ -275,8 +295,10 @@ class AVLTreeList(object):
 		insert_node.setRight(self.virtual_node(insert_node))
 		insert_node.setHeight(0)
 		
+		rotate_number = 0
+
 		if not(0 <= i <= self.size):
-			return "The intended index have to be between 0 and tree size"
+			return None
 		
 		if(self.root == None):
 			self.root = insert_node
@@ -295,13 +317,9 @@ class AVLTreeList(object):
 				predecessor_node.setRight(insert_node)
 		
 		self.size += 1
-		# self.print_tree(self.root)
-		self.fixTree(insert_node.parent, True)
-		# print('After fix')
-		# self.print_tree(self.root)
+		rotate_number = self.fixTree(insert_node.parent, 0)
 
-
-		return
+		return rotate_number
 
 	"""deletes the i'th item in the list
 
@@ -312,7 +330,90 @@ class AVLTreeList(object):
 	@returns: the number of rebalancing operation due to AVL rebalancing
 	"""
 	def delete(self, i):
-		return -1
+		
+		if not(0 <= i < self.size):
+			return None
+		
+		self.size -= 1
+
+		delete_node = self.retrieve_node(i)
+		delete_node_parent = delete_node.getParent()
+		delete_node_right = delete_node.getRight()
+		delete_node_left = delete_node.getLeft()
+
+		# If delete node is leaf
+		if((delete_node_right.rank == 0) and (delete_node_left.rank == 0)):
+			if(delete_node_parent.getLeft() == delete_node):
+				delete_node_parent.setLeft(self.virtual_node(delete_node_parent))
+			else:
+				delete_node_parent.setRight(self.virtual_node(delete_node_parent))
+			
+			rotation_count = self.fixTree(delete_node_parent, 0)
+		
+		# If delete node has only left child
+		elif(delete_node_right.rank == 0):
+			if(delete_node_parent.getLeft() == delete_node):
+				delete_node_parent.setLeft(delete_node_left)
+			else:
+				delete_node_parent.setRight(delete_node_left)
+			
+			rotation_count = self.fixTree(delete_node_parent, 0)
+
+		# If delete node has only right child
+		elif(delete_node_left.rank == 0):
+			if(delete_node_parent.getLeft() == delete_node):
+				delete_node_parent.setLeft(delete_node_right)
+			else:
+				delete_node_parent.setRight(delete_node_right)
+
+			rotation_count = self.fixTree(delete_node_parent, 0)
+		
+		# If delete node is has two children
+		else:
+			succesor_delete_node = delete_node.getSuccessor()
+			succesor_delete_node_right = succesor_delete_node.getRight()
+			succesor_delete_node_parent = succesor_delete_node.getParent()
+
+			succesor_delete_node_parent.setLeft(succesor_delete_node_right)
+			succesor_delete_node.setParent(delete_node_parent)
+			succesor_delete_node.setLeft(delete_node_left)
+
+			# Check right child of delete not the succesor 
+			if not(succesor_delete_node == delete_node_right):
+				succesor_delete_node.setRight(delete_node_right)
+			
+			else:
+				succesor_delete_node.setRight(succesor_delete_node_right)
+
+
+			# Update succesor parent children 
+			if(delete_node_parent == None):
+				self.root = succesor_delete_node
+			
+			else:
+				if(delete_node_parent.getLeft() == delete_node):
+					delete_node_parent.setLeft(succesor_delete_node)
+				
+				elif(delete_node_parent.getRight() == delete_node):
+					delete_node_parent.setRight(succesor_delete_node)
+
+			succesor_delete_node_parent.setHeight(max(succesor_delete_node_parent.getLeft().getHeight(), succesor_delete_node_parent.getRight().getHeight()) + 1)
+			succesor_delete_node_parent.rank = succesor_delete_node_parent.getRight().rank + succesor_delete_node_parent.getLeft().rank + 1
+			
+			succesor_delete_node.setHeight(max(succesor_delete_node.getLeft().getHeight(), succesor_delete_node.getRight().getHeight()) + 1)
+			succesor_delete_node.rank = succesor_delete_node.getRight().rank + succesor_delete_node.getLeft().rank + 1
+			
+			if(succesor_delete_node == self.first()):
+				first_rotation_count = self.fixTree(succesor_delete_node, 0)
+			else:
+				first_rotation_count = self.fixTree(succesor_delete_node.getPredecessor(), 0)
+			
+			if(succesor_delete_node == self.maxnode):
+				rotation_count = self.fixTree(succesor_delete_node, first_rotation_count)
+			else:
+				rotation_count = self.fixTree(succesor_delete_node.getSuccessor(), first_rotation_count)
+
+		return rotation_count
 
 
 	"""returns the value of the first item in the list
@@ -397,35 +498,42 @@ class AVLTreeList(object):
 	def getRoot(self):
 		return self.root
 
-	def fixTree(self, father, insert):
+	def fixTree(self, father, counter):
 		if(father == None):
-			return
+			return counter
 		balanceFactor = father.balanceFactor()
 		if (-1 <= balanceFactor <= 1):
-			self.fixTree(father.parent, insert)
+			father.setHeight(max(father.getLeft().getHeight(), father.getRight().getHeight()) + 1)
+			father.rank = father.getLeft().rank + father.getRight().rank + 1
+			self.fixTree(father.parent, counter)
 
 		if balanceFactor < -1:
 			if father.right.balanceFactor() == -1: #left
 				father.leftRotate()
+				counter += 1
 			else: #right then left
 				father.right.rightRotate()
 				father.leftRotate()
+				counter += 2
 
 		elif balanceFactor > 1:
 			if father.getLeft().balanceFactor() == 1: #right
 				father.rightRotate()
+				counter += 1
 			else: #left then right
 				father.getLeft().leftRotate()
 				father.rightRotate()
+				counter += 2
 		
 		father.setHeight(max(father.getLeft().getHeight(), father.getRight().getHeight()) + 1)
-		father.rank = father.left.rank+father.right.rank+1
+		father.rank = father.getLeft().rank + father.getRight().rank + 1
 
 		
 		if(father.parent == None):
 			self.root = father
-			return
-		self.fixTree(father.parent, insert)
+			return counter
+
+		self.fixTree(father.parent, counter)
 	
 	def virtual_node(self, father):
 		node = AVLNode()
