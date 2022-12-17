@@ -25,6 +25,10 @@ def build_tree(final_list, insert_list, index_order, P=True):
 	if P:
 		print(f'----After insert final tree----')
 		print_tree(avl_tree.root)
+	print(avl_tree.listToArray())
+	print(avl_tree.length())
+
+	avl_tree_copy = avl_tree
 
 	# Retrive test
 	for i in range(len(final_list)):
@@ -52,40 +56,50 @@ def build_tree(final_list, insert_list, index_order, P=True):
 	print('First and Last Done')
 
 	# Delete
-	delete_list = final_list
-	delete_index = [1]
-	for i in range(7):
-		delete_list.pop(0)
-		avl_tree.delete(0)
-		if P:
-			print(f'\n****After delete {i} tree*****')
-			print_tree(avl_tree.root)
+	# delete_list = final_list
+	# delete_index = [1]
+	# for i in range(7):
+	# 	delete_list.pop(0)
+	# 	avl_tree.delete(0)
+	# 	if P:
+	# 		print(f'\n****After delete {i} tree*****')
+	# 		print_tree(avl_tree.root)
 
-		for i in range(len(delete_list)):
-			if(avl_tree.retrieve(i) != (delete_list[i])):
-				print(f'Error in delete test! i={i}: TreeNode value: {avl_tree.retrieve(i)}. List value (Real): {delete_list[i]}.')
+	# 	for i in range(len(delete_list)):
+	# 		if(avl_tree.retrieve(i) != (delete_list[i])):
+	# 			print(f'Error in delete test! i={i}: TreeNode value: {avl_tree.retrieve(i)}. List value (Real): {delete_list[i]}.')
 	
-	print(f'\n---After All delete tree---')
-	print_tree(avl_tree.root)
+	# print(f'\n---After All delete tree---')
+	# print_tree(avl_tree.root)
+
+	# Permutation
+	for i in range(3):
+		print(f'--------tree {i}----------')
+		perm_tree = avl_tree_copy.permutation()
+		print_tree(perm_tree.getRoot())
+		print(perm_tree.listToArray())
+
+	# Sort tree
+	print(f'====== sorted tree =========')
+	b = perm_tree.sort()
+	print_tree(b.getRoot())
+	print(b.listToArray())
+
 
 def checkTree():
-	avl_tree = avl.AVLTreeList()
-
-	for i in range(20):
-		if i % 3 == 0:
-			avl_tree.insert(avl_tree.length()//2, i)
-		elif i % 3 == 1:
-			avl_tree.insert(0, i)
-		else:
-			avl_tree.delete(avl_tree.length()//2)
-		print_tree(avl_tree.root)
+	T = avl.AVLTreeList()
+	print(T.append(3))
+	print(T.insert(0, 'A'))
+	print(T.insert(0, 'B'))
+	print(T.insert(0, 'C'))
+	print_tree(T.getRoot())
 
 
-build_tree(['A', 'B', 'C', 'D', 'E', 'F', 'G'], ['G', 'F', 'E', 'D', 'C', 'B', 'A'], [0 for _ in range(7)], True)
-build_tree(['A', 'B', 'C', 'D', 'E', 'F', 'G'], ['C', 'D', 'A', 'B', 'E', 'G', 'F'], [0, 1, 0, 1, 4, 5, 5], True)
-build_tree(['A', 'B', 'C', 'D', 'E', 'F', 'G'], ['C', 'A', 'B', 'E', 'D', 'G', 'F'], [0, 0, 1, 3, 3, 5, 5], False)
-build_tree(['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'], ['F', 'H', 'G', 'E', 'A', 'B', 'C', 'D'], [0, 1, 1, 0, 0, 1, 2, 3], False)
+# build_tree(['A', 'B', 'C', 'D', 'E', 'F', 'G'], ['G', 'F', 'E', 'D', 'C', 'B', 'A'], [0 for _ in range(7)], False)
+# build_tree(['A', 'B', 'C', 'D', 'E', 'F', 'G'], ['C', 'D', 'A', 'B', 'E', 'G', 'F'], [0, 1, 0, 1, 4, 5, 5], False)
+# build_tree(['A', 'B', 'C', 'D', 'E', 'F', 'G'], ['C', 'A', 'B', 'E', 'D', 'G', 'F'], [0, 0, 1, 3, 3, 5, 5], False)
+# build_tree(['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'], ['F', 'H', 'G', 'E', 'A', 'B', 'C', 'D'], [0, 1, 1, 0, 0, 1, 2, 3], False)
 # build_tree(['B', 'A'], ['A', 'B'], [0, 0], True)
 # build_tree(['A', 'B'], ['A', 'B'], [0, 1], True)
-# checkTree()
+checkTree()
 print("---Finish----")
