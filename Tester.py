@@ -13,12 +13,14 @@ def print_tree(node):
 		print_tree(node.right)
 
 def build_tree(final_list, insert_list, index_order, P=True):
+	
 	avl_tree = avl.AVLTreeList()
+	
 	# Build tree - Insert test
 	for i, val in enumerate(insert_list):
 		avl_tree.insert(index_order[i], val)
 	if P:
-		print(f'--After insert final tree--')
+		print(f'----After insert final tree----')
 		print_tree(avl_tree.root)
 
 	# Retrive test
@@ -52,8 +54,9 @@ def build_tree(final_list, insert_list, index_order, P=True):
 	for i in delete_index:
 		delete_list.pop(i)
 		avl_tree.delete(i)
-		print(f'\n****After delete {i} tree*****')
-		print_tree(avl_tree.root)
+		if P:
+			print(f'\n****After delete {i} tree*****')
+			print_tree(avl_tree.root)
 
 		for i in range(len(delete_list)):
 			if(avl_tree.retrieve(i) != (delete_list[i])):
@@ -62,10 +65,22 @@ def build_tree(final_list, insert_list, index_order, P=True):
 	print(f'\n---After All delete tree---')
 	print_tree(avl_tree.root)
 
+def checkTree():
+	avl_tree = avl.AVLTreeList()
+
+	for i in range(20):
+		if i % 3 == 0:
+			avl_tree.insert(avl_tree.length()//2, i)
+		elif i % 3 == 1:
+			avl_tree.insert(0, i)
+		else:
+			avl_tree.delete(avl_tree.length()//2)
+		print_tree(avl_tree.root)
 
 
 # build_tree(['A', 'B', 'C', 'D', 'E', 'F', 'G'], ['G', 'F', 'E', 'D', 'C', 'B', 'A'], [0 for _ in range(7)], False)
-# build_tree(['A', 'B', 'C', 'D', 'E', 'F', 'G'], ['C', 'D', 'A', 'B', 'E', 'G', 'F'], [0, 1, 0, 1, 4, 5, 5], False)
+# build_tree(['A', 'B', 'C', 'D', 'E', 'F', 'G'], ['C', 'D', 'A', 'B', 'E', 'G', 'F'], [0, 1, 0, 1, 4, 5, 5], True)
 # build_tree(['A', 'B', 'C', 'D', 'E', 'F', 'G'], ['C', 'A', 'B', 'E', 'D', 'G', 'F'], [0, 0, 1, 3, 3, 5, 5], False)
-build_tree(['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'], ['F', 'H', 'G', 'E', 'A', 'B', 'C', 'D'], [0, 1, 1, 0, 0, 1, 2, 3], True)
+# build_tree(['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'], ['F', 'H', 'G', 'E', 'A', 'B', 'C', 'D'], [0, 1, 1, 0, 0, 1, 2, 3], False)
+checkTree()
 print("---Finish----")
