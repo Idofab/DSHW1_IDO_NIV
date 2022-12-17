@@ -334,12 +334,25 @@ class AVLTreeList(object):
 		if not(0 <= i < self.size):
 			return None
 		
-		self.size -= 1
+		if(i == 0 and self.size == 1):
+			self.size = 0
+			self.root = None
+			self.maxnode = None
+			return 0
 
 		delete_node = self.retrieve_node(i)
 		delete_node_parent = delete_node.getParent()
 		delete_node_right = delete_node.getRight()
 		delete_node_left = delete_node.getLeft()
+		
+		if(delete_node == self.maxnode):
+			self.maxnode = delete_node.getPredecessor()
+		
+		new_first = self.retrieve(0)
+		if(i == 0):
+			new_first = self.retrieve_node(1)
+
+		self.size -= 1
 
 		# If delete node is leaf
 		if((delete_node_right.rank == 0) and (delete_node_left.rank == 0)):
@@ -403,11 +416,12 @@ class AVLTreeList(object):
 			succesor_delete_node.setHeight(max(succesor_delete_node.getLeft().getHeight(), succesor_delete_node.getRight().getHeight()) + 1)
 			succesor_delete_node.rank = succesor_delete_node.getRight().rank + succesor_delete_node.getLeft().rank + 1
 			
-			if(succesor_delete_node == self.first()):
-				first_rotation_count = self.fixTree(succesor_delete_node, 0)
-			else:
+			if(succesor_delete_node != new_first):
 				first_rotation_count = self.fixTree(succesor_delete_node.getPredecessor(), 0)
-			
+
+			else:
+				first_rotation_count = self.fixTree(succesor_delete_node, 0)
+
 			if(succesor_delete_node == self.maxnode):
 				rotation_count = self.fixTree(succesor_delete_node, first_rotation_count)
 			else:
@@ -450,7 +464,7 @@ class AVLTreeList(object):
 	@returns: the size of the list
 	"""
 	def length(self):
-		return self.size - 1
+		return self.size
 
 	"""sort the info values of the list
 
@@ -552,3 +566,10 @@ class AVLTreeList(object):
 			self.print_tree(node.left)
 		if(node != None and node.right.rank != 0):
 			self.print_tree(node.right)
+	
+	def append(self, val):
+		self.insert(self.length(), val)
+	
+	def getTreeHeight(self):
+		return self.root.height
+
