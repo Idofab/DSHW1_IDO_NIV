@@ -4,6 +4,7 @@
 #id2      - 206170219
 #name2    - Niv Sagie Tenenbaum  
 
+import random
 """A class represnting a node in an AVL tree"""
 
 class AVLNode(object):
@@ -232,7 +233,7 @@ class AVLTreeList(object):
 	"""
 
 	def setMaxNode(self):
-		maxnode = self.root
+		maxnode = self.getRoot()
 		while maxnode.getRight() != None:
 			maxnode = maxnode.getRight()
 		self.maxnode = maxnode
@@ -479,7 +480,9 @@ class AVLTreeList(object):
 	@returns: a list of strings representing the data structure
 	"""
 	def listToArray(self):
-		return None
+		if(self.size == 0):
+			return []
+		return self.in_order(self.getRoot())
 
 	"""returns the size of the list 
 
@@ -495,7 +498,40 @@ class AVLTreeList(object):
 	@returns: an AVLTreeList where the values are sorted by the info of the original list.
 	"""
 	def sort(self):
-		return None
+		sorted_tree = AVLTreeList()
+		lst = self.listToArray()
+		if (len(lst)==0):
+			return sorted_tree
+		
+		sorted_tree.root = AVLNode(lst[0])
+		sorted_tree.root.setRight(self.virtual_node(sorted_tree.root))
+		sorted_tree.root.setLeft(self.virtual_node(sorted_tree.root))
+		sorted_tree.root.setHeight(1)
+
+		sorted_tree.size = 1
+		for i in range(1,len(lst)):
+			insert_node = AVLNode(lst[i])
+			insert_node.setRight(self.virtual_node(insert_node))
+			insert_node.setLeft(self.virtual_node(insert_node))
+			insert_node.setHeight(1)
+			sorted_tree.insert_sort(sorted_tree.root, insert_node)
+		return sorted_tree
+		
+	def insert_sort(self, checkNode, node):			
+		if checkNode.value > node.value:
+			if (checkNode.getLeft().isRealNode()):
+				self.insert_sort(checkNode.left,node)
+			else:
+				checkNode.setLeft(node)
+				self.fixTree(node,0)
+				
+		else:
+			if (checkNode.getRight().isRealNode()):
+				self.insert_sort(checkNode.right,node)
+			else:
+				checkNode.setRight(node)
+				self.fixTree(node,0)
+		
 
 	"""permute the info values of the list 
 
@@ -503,7 +539,16 @@ class AVLTreeList(object):
 	@returns: an AVLTreeList where the values are permuted randomly by the info of the original list. ##Use Randomness
 	"""
 	def permutation(self):
-		return None
+		perm_tree = AVLTreeList()
+		if(self.size == 0):
+			return perm_tree
+		tree_as_list = self.listToArray()
+		while 1 < len(tree_as_list):
+			rand_ind = random.randint(0, len(tree_as_list) - 1)
+			perm_tree.insert(0, tree_as_list[rand_ind])
+			tree_as_list.pop(rand_ind)
+		perm_tree.insert(0, tree_as_list[0])
+		return perm_tree
 
 	"""concatenates lst to self
 
@@ -523,9 +568,11 @@ class AVLTreeList(object):
 	@returns: the first index that contains val, -1 if not found.
 	"""
 	def search(self, val):
-		return None
-
-
+		tree_lst = self.listToArray()
+		for i, lst_val in enumerate(tree_lst):
+			if(val == lst_val):
+				return i
+		return -1
 
 	"""returns the root of the tree representing the list
 
@@ -535,15 +582,37 @@ class AVLTreeList(object):
 	def getRoot(self):
 		return self.root
 
+	"""deletes the i'th item in the list
+
+	@type i: int
+	@pre: 0 <= i < self.length()
+	@param i: The intended index in the list to be deleted
+	@rtype: int
+	@returns: the number of rebalancing operation due to AVL rebalancing
+	"""
+	def in_order(self, start_node):
+		tree_array = []
+		self.in_order_rec(start_node, tree_array)
+		return tree_array
+		
+	def in_order_rec(self, node, tree_array):
+		if not (node.isRealNode()):
+			return
+		self.in_order_rec(node.getLeft(), tree_array)
+		tree_array.append(node.value)
+		self.in_order_rec(node.getRight(), tree_array)
+
 	def fixTree(self, father, counter):
 		if(father == None):
 			return counter
 		balanceFactor = father.balanceFactor()
+		father_Parent = father.getParent()
 		if (-1 <= balanceFactor <= 1):
 			father.setHeight(max(father.getLeft().getHeight(), father.getRight().getHeight()) + 1)
 			father.rank = father.getLeft().rank + father.getRight().rank + 1
-			self.fixTree(father.parent, counter)
-
+			counter += self.fixTree(father.parent, counter)
+		
+		rotate = False
 		if balanceFactor < -1:
 			if father.getRight().balanceFactor() == -1: #left
 				father.leftRotate()
@@ -552,7 +621,7 @@ class AVLTreeList(object):
 				father.getRight().rightRotate()
 				father.leftRotate()
 				counter += 2
-
+			rotate = True
 		elif balanceFactor > 1:
 			if father.getLeft().balanceFactor() == 1: #right
 				father.rightRotate()
@@ -561,13 +630,14 @@ class AVLTreeList(object):
 				father.getLeft().leftRotate()
 				father.rightRotate()
 				counter += 2
+			rotate = True
+
 		
 		father.setHeight(max(father.getLeft().getHeight(), father.getRight().getHeight()) + 1)
 		father.rank = father.getLeft().rank + father.getRight().rank + 1
-
 		
-		if(father.parent == None):
-			self.root = father
+		if((father_Parent == None) and rotate):
+			self.root = father.getParent()
 			return counter
 
 		return self.fixTree(father.parent, counter)
@@ -595,10 +665,10 @@ class AVLTreeList(object):
 	For tester
 	"""
 	def append(self, val):
-		self.insert(self.length(), val)
+		return self.insert(self.length(), val)
 	"""
 	For tester
 	"""
 	def getTreeHeight(self):
-		return self.root.height
+		return self.getRoot().height
 
