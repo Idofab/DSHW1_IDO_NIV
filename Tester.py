@@ -1,6 +1,9 @@
 import avl_template_new as avl
 
 def print_tree(node):
+	if node is None:
+		print("Empty tree!")
+		return
 	if (node.height > 0):
 		print("value:",node.value, f'(Rank: {node.rank}, Height: {node.height})')
 	if(node != None and node.left.rank != 0):
@@ -50,10 +53,10 @@ def build_tree(final_list, insert_list, index_order, P=True):
 
 	# Delete
 	delete_list = final_list
-	delete_index = [0, 5, 3]
-	for i in delete_index:
-		delete_list.pop(i)
-		avl_tree.delete(i)
+	delete_index = [1]
+	for i in range(7):
+		delete_list.pop(0)
+		avl_tree.delete(0)
 		if P:
 			print(f'\n****After delete {i} tree*****')
 			print_tree(avl_tree.root)
@@ -78,9 +81,11 @@ def checkTree():
 		print_tree(avl_tree.root)
 
 
-# build_tree(['A', 'B', 'C', 'D', 'E', 'F', 'G'], ['G', 'F', 'E', 'D', 'C', 'B', 'A'], [0 for _ in range(7)], False)
-# build_tree(['A', 'B', 'C', 'D', 'E', 'F', 'G'], ['C', 'D', 'A', 'B', 'E', 'G', 'F'], [0, 1, 0, 1, 4, 5, 5], True)
-# build_tree(['A', 'B', 'C', 'D', 'E', 'F', 'G'], ['C', 'A', 'B', 'E', 'D', 'G', 'F'], [0, 0, 1, 3, 3, 5, 5], False)
-# build_tree(['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'], ['F', 'H', 'G', 'E', 'A', 'B', 'C', 'D'], [0, 1, 1, 0, 0, 1, 2, 3], False)
-checkTree()
+build_tree(['A', 'B', 'C', 'D', 'E', 'F', 'G'], ['G', 'F', 'E', 'D', 'C', 'B', 'A'], [0 for _ in range(7)], True)
+build_tree(['A', 'B', 'C', 'D', 'E', 'F', 'G'], ['C', 'D', 'A', 'B', 'E', 'G', 'F'], [0, 1, 0, 1, 4, 5, 5], True)
+build_tree(['A', 'B', 'C', 'D', 'E', 'F', 'G'], ['C', 'A', 'B', 'E', 'D', 'G', 'F'], [0, 0, 1, 3, 3, 5, 5], False)
+build_tree(['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'], ['F', 'H', 'G', 'E', 'A', 'B', 'C', 'D'], [0, 1, 1, 0, 0, 1, 2, 3], False)
+# build_tree(['B', 'A'], ['A', 'B'], [0, 0], True)
+# build_tree(['A', 'B'], ['A', 'B'], [0, 1], True)
+# checkTree()
 print("---Finish----")

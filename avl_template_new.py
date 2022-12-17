@@ -109,9 +109,7 @@ class AVLNode(object):
 	@returns: False if self is a virtual node, True otherwise.
 	"""
 	def isRealNode(self):
-		if self.value == None:
-			return False
-		return True
+		return self.rank != 0
 
 	"""
 	@rtype: AVLNode
@@ -176,9 +174,12 @@ class AVLNode(object):
 				father_parent.setLeft(rightSon)
 		#   0        rightSon
 		# 0   0  father    rightGrandson
-		father.setHeight(father.left.getHeight() - father.right.getHeight())
-		rightSon.setHeight(rightSon.getLeft().getHeight() - rightSon.getRight().getHeight())
 
+		father.setHeight(max(father.left.getHeight(), father.right.getHeight()) + 1)
+		father.rank = father.getRight().rank + father.getLeft().rank + 1
+
+		rightSon.setHeight(max(rightSon.getLeft().getHeight(), rightSon.getRight().getHeight()) + 1)
+		rightSon.rank = rightSon.getRight().rank + rightSon.getLeft().rank + 1
 
 	def rightRotate(father):
 		#     3  father
@@ -197,9 +198,18 @@ class AVLNode(object):
 				father_parent.setLeft(leftSon)
 		#   2               leftSon
 		# 1   3  leftGrandson     father
-		leftSon.setHeight(max(leftSon.getLeft().getHeight(), leftSon.getRight().getHeight()) + 1)
-		leftSon.rank = leftSon.left.rank + leftSon.right.rank+1
+		father.setHeight(max(father.left.getHeight(), father.right.getHeight()) + 1)
+		father.rank = father.getRight().rank + father.getLeft().rank + 1
 
+		leftSon.setHeight(max(leftSon.getLeft().getHeight(), leftSon.getRight().getHeight()) + 1)
+		leftSon.rank = leftSon.left.rank + leftSon.right.rank + 1
+
+	"""
+	For tester
+	"""
+
+	def getSize(self):
+		return self.rank
 """
 A class implementing the ADT list, using an AVL tree.
 """
@@ -331,14 +341,27 @@ class AVLTreeList(object):
 	"""
 	def delete(self, i):
 		
+		# Check if the index is legal
 		if not(0 <= i < self.size):
-			return None
-		
-		if(i == 0 and self.size == 1):
-			self.size = 0
-			self.root = None
-			self.maxnode = None
-			return 0
+			return -1
+
+		# Special use cases = Tree.size < 2
+		if(self.size <= 2):
+			delete_node = self.retrieve_node(i)
+			if(self.size == 1):
+				self.size = 0
+				self.root = None
+				self.maxnode = None
+				return 0
+			elif(delete_node == self.root):
+				self.size = 1
+				if(delete_node.getLeft().rank == 0):
+					self.root = delete_node.getRight()
+				else:
+					self.root = delete_node.getLeft()
+				self.maxnode = self.root
+				self.root.setParent(None)
+				return 0
 
 		delete_node = self.retrieve_node(i)
 		delete_node_parent = delete_node.getParent()
@@ -348,7 +371,7 @@ class AVLTreeList(object):
 		if(delete_node == self.maxnode):
 			self.maxnode = delete_node.getPredecessor()
 		
-		new_first = self.retrieve(0)
+		new_first = self.retrieve_node(0)
 		if(i == 0):
 			new_first = self.retrieve_node(1)
 
@@ -522,11 +545,11 @@ class AVLTreeList(object):
 			self.fixTree(father.parent, counter)
 
 		if balanceFactor < -1:
-			if father.right.balanceFactor() == -1: #left
+			if father.getRight().balanceFactor() == -1: #left
 				father.leftRotate()
 				counter += 1
 			else: #right then left
-				father.right.rightRotate()
+				father.getRight().rightRotate()
 				father.leftRotate()
 				counter += 2
 
@@ -547,14 +570,16 @@ class AVLTreeList(object):
 			self.root = father
 			return counter
 
-		self.fixTree(father.parent, counter)
+		return self.fixTree(father.parent, counter)
 	
 	def virtual_node(self, father):
 		node = AVLNode()
 		node.rank = 0
 		node.parent = father
 		return node
-	
+	"""
+	For tester
+	"""
 	def print_tree(self, node):
 		if (node.height > 0):
 			print("value:",node.value)
@@ -566,10 +591,14 @@ class AVLTreeList(object):
 			self.print_tree(node.left)
 		if(node != None and node.right.rank != 0):
 			self.print_tree(node.right)
-	
+	"""
+	For tester
+	"""
 	def append(self, val):
 		self.insert(self.length(), val)
-	
+	"""
+	For tester
+	"""
 	def getTreeHeight(self):
 		return self.root.height
 
