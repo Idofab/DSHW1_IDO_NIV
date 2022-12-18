@@ -13,7 +13,7 @@ class AVLNode(object):
 	@type value: str
 	@param value: data of your node
 	"""
-	def __init__(self, value=""):
+	def __init__(self, value= ""):
 		self.value = value
 		self.left = None
 		self.right = None
@@ -114,7 +114,7 @@ class AVLNode(object):
 
 	"""
 	@rtype: AVLNode
-	@returns: the predecesso of self
+	@returns: the predecessor node of self
 	"""
 	def getPredecessor(self):
 		if(self.getParent() == None) and (self.getLeft().rank == 0):
@@ -135,6 +135,10 @@ class AVLNode(object):
 				predecessor_node = predecessor_node.getParent()
 			return predecessor_node.getParent()
 	
+	"""
+	@rtype: AVLNode
+	@returns: the Successor node of self
+	"""
 	def getSuccessor(self):
 
 		if(self.getParent() == None) and (self.getRight().rank == 0):
@@ -155,13 +159,17 @@ class AVLNode(object):
 				successor_node = successor_node.getParent()
 			return successor_node.getParent()
 	
+	"""
+	@rtype: int
+	@returns: the BF of self
+	"""
 	def balanceFactor(self):
 		return self.getLeft().getHeight() - self.getRight().getHeight()
 	
 	def leftRotate(father):
-		#0      father
-		#  0    rightSon
-		#     0 rightGrandson
+		# 1      father
+		#   2    rightSon
+		#     3 rightGrandson
 		rightSon= father.getRight()
 		father_parent= father.getParent()
 		father.setRight(rightSon.getLeft())
@@ -173,8 +181,8 @@ class AVLNode(object):
 				father_parent.setRight(rightSon)
 			else:
 				father_parent.setLeft(rightSon)
-		#   0        rightSon
-		# 0   0  father    rightGrandson
+		#   2        rightSon
+		# 1   3  father    rightGrandson
 
 		father.setHeight(max(father.left.getHeight(), father.right.getHeight()) + 1)
 		father.rank = father.getRight().rank + father.getLeft().rank + 1
@@ -214,7 +222,6 @@ class AVLNode(object):
 """
 A class implementing the ADT list, using an AVL tree.
 """
-
 class AVLTreeList(object):
 
 	"""
@@ -453,7 +460,6 @@ class AVLTreeList(object):
 
 		return rotation_count
 
-
 	"""returns the value of the first item in the list
 
 	@rtype: str
@@ -532,7 +538,6 @@ class AVLTreeList(object):
 				checkNode.setRight(node)
 				self.fixTree(node,0)
 		
-
 	"""permute the info values of the list 
 
 	@rtype: list
@@ -582,7 +587,7 @@ class AVLTreeList(object):
 	def getRoot(self):
 		return self.root
 
-	"""deletes the i'th item in the list
+	"""deletes the i'th item in the list ?????????????????????
 
 	@type i: int
 	@pre: 0 <= i < self.length()

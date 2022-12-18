@@ -1259,7 +1259,6 @@ class testAVLList(unittest.TestCase):
                              T4.getRoot().getHeight()), T3.concat(T4))
 
 
-
     # def test_successor_and_predeccessor(self):
     #     T = AVLTreeList()
     #     T.append(0)
