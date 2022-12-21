@@ -102,4 +102,29 @@ def checkTree():
 # build_tree(['B', 'A'], ['A', 'B'], [0, 0], True)
 # build_tree(['A', 'B'], ['A', 'B'], [0, 1], True)
 checkTree()
+
+
+lst = avl.AVLTreeList()
+self = avl.AVLTreeList()
+letters = ["A", "B", "C", "D", "E", "F", "G", "H"]
+for i in range (4,-1,-1):
+	self.insert(0,letters[i])
+print("------------- lst --------------")
+print_tree(self.getRoot())
+for i in range (7,4,-1):
+	lst.insert(0,letters[i])
+print("------------- self --------------")
+print_tree(lst.getRoot())
+
+
+print("------------- concat function --------------")
+first = lst
+sec = self
+print("first:",first.listToArray())
+print("second:",sec.listToArray())
+print("correct:",first.listToArray()+sec.listToArray())
+first.concat(sec)
+print("------------- concated --------------")
+print("concated:",first.listToArray())
+first.print_tree(first.root)
 print("---Finish----")
