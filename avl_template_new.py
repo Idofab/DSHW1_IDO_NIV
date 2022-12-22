@@ -563,15 +563,17 @@ class AVLTreeList(object):
 	@returns: the absolute value of the difference between the height of the AVL trees joined
 	"""
 	def concat(self, lst):
-		if (self.length()==0 and lst.length()==0):
+		if (self.length() == 0 and lst.length() == 0):
 			return 0
-		elif (self.length()==0):
+
+		elif (self.length() == 0):
 			self = lst
 			return lst.length()
-		elif (lst.length()==0):
+
+		elif (lst.length() == 0):
 			return self.length()
 
-		elif (self.getRoot().getHeight()>lst.getRoot().getHeight()):
+		elif (self.getRoot().getHeight() > lst.getRoot().getHeight()):
 			x_node = self.concat_fixed(True, self, lst)
 			self.fixTree(x_node, 0)
 
@@ -581,8 +583,10 @@ class AVLTreeList(object):
 			self.fixTree(x_node, 0)
 
 		return abs(self.length() - lst.length())
+	
 	def concat_fixed(self,self_is_high,high,low):
-		# x_node is the relevant node in the highest tree  so self<x_node<lst
+		# x_node is the relevant node in the highest tree so (self < x_node < lst)
+
 		if (self_is_high):
 			x_node, x_index = high.find_node_in_correct_height(low.getRoot().getHeight(), False)
 		else:
@@ -602,8 +606,10 @@ class AVLTreeList(object):
 		return x_node
 
 	def find_node_in_correct_height(self, height, find_min):
-		#Find the max\min node with the correct height
+		#Find the max/min node with the correct height
+		
 		node = self.getRoot()
+		
 		if (find_min):
 			index = node.getLeft().rank
 			while ((node.getLeft().isRealNode()) and (node.getHeight() >= height)):
@@ -614,6 +620,7 @@ class AVLTreeList(object):
 			while (node.getRight().isRealNode() and (node.getHeight() != height)):
 				index += node.getLeft().rank+1
 				node = node.getRight()
+		
 		return (node, index)
 
 	"""searches for a *value* in the list
