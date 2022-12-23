@@ -56,34 +56,35 @@ def build_tree(final_list, insert_list, index_order, P=True):
 	print('First and Last Done')
 
 	# Delete
-	# delete_list = final_list
-	# delete_index = [1]
-	# for i in range(7):
-	# 	delete_list.pop(0)
-	# 	avl_tree.delete(0)
-	# 	if P:
-	# 		print(f'\n****After delete {i} tree*****')
-	# 		print_tree(avl_tree.root)
+	delete_list = final_list
 
-	# 	for i in range(len(delete_list)):
-	# 		if(avl_tree.retrieve(i) != (delete_list[i])):
-	# 			print(f'Error in delete test! i={i}: TreeNode value: {avl_tree.retrieve(i)}. List value (Real): {delete_list[i]}.')
+	for i in range(4):
+		delete_ind = 2
+		delete_list.pop(delete_ind)
+		avl_tree.delete(delete_ind)
+		if P:
+			print(f'\n****After delete {i} tree*****')
+			print_tree(avl_tree.root)
+
+		for i in range(len(delete_list)):
+			if(avl_tree.retrieve(i) != (delete_list[i])):
+				print(f'Error in delete test! i={i}: TreeNode value: {avl_tree.retrieve(i)}. List value (Real): {delete_list[i]}.')
 	
-	# print(f'\n---After All delete tree---')
-	# print_tree(avl_tree.root)
+	print(f'\n---After All delete tree---')
+	print_tree(avl_tree.root)
 
 	# Permutation
-	for i in range(3):
-		print(f'--------tree {i}----------')
-		perm_tree = avl_tree_copy.permutation()
-		print_tree(perm_tree.getRoot())
-		print(perm_tree.listToArray())
+	# for i in range(3):
+	# 	print(f'--------tree {i}----------')
+	# 	perm_tree = avl_tree_copy.permutation()
+	# 	print_tree(perm_tree.getRoot())
+	# 	print(perm_tree.listToArray())
 
-	# Sort tree
-	print(f'====== sorted tree =========')
-	b = perm_tree.sort()
-	print_tree(b.getRoot())
-	print(b.listToArray())
+	# # Sort tree
+	# print(f'====== sorted tree =========')
+	# b = perm_tree.sort()
+	# print_tree(b.getRoot())
+	# print(b.listToArray())
 
 
 def checkTree():
@@ -95,36 +96,36 @@ def checkTree():
 	print_tree(T.getRoot())
 
 
-# build_tree(['A', 'B', 'C', 'D', 'E', 'F', 'G'], ['G', 'F', 'E', 'D', 'C', 'B', 'A'], [0 for _ in range(7)], False)
+build_tree(['A', 'B', 'C', 'D', 'E', 'F', 'G'], ['G', 'F', 'E', 'D', 'C', 'B', 'A'], [0 for _ in range(7)], True)
 # build_tree(['A', 'B', 'C', 'D', 'E', 'F', 'G'], ['C', 'D', 'A', 'B', 'E', 'G', 'F'], [0, 1, 0, 1, 4, 5, 5], False)
 # build_tree(['A', 'B', 'C', 'D', 'E', 'F', 'G'], ['C', 'A', 'B', 'E', 'D', 'G', 'F'], [0, 0, 1, 3, 3, 5, 5], False)
 # build_tree(['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'], ['F', 'H', 'G', 'E', 'A', 'B', 'C', 'D'], [0, 1, 1, 0, 0, 1, 2, 3], False)
 # build_tree(['B', 'A'], ['A', 'B'], [0, 0], True)
 # build_tree(['A', 'B'], ['A', 'B'], [0, 1], True)
-checkTree()
+# checkTree()
+
+def test_concat():
+	lst = avl.AVLTreeList()
+	self = avl.AVLTreeList()
+	letters = ["A", "B", "C", "D", "E", "F", "G", "H"]
+	for i in range (4,-1,-1):
+		self.insert(0,letters[i])
+	print("------------- lst --------------")
+	# print_tree(self.getRoot())
+	# for i in range (7,4,-1):
+	# 	lst.insert(0,letters[i])
+	print("------------- self --------------")
+	# print_tree(lst.getRoot())
 
 
-lst = avl.AVLTreeList()
-self = avl.AVLTreeList()
-letters = ["A", "B", "C", "D", "E", "F", "G", "H"]
-for i in range (4,-1,-1):
-	self.insert(0,letters[i])
-print("------------- lst --------------")
-print_tree(self.getRoot())
-for i in range (7,4,-1):
-	lst.insert(0,letters[i])
-print("------------- self --------------")
-print_tree(lst.getRoot())
-
-
-print("------------- concat function --------------")
-first = lst
-sec = self
-print("first:",first.listToArray())
-print("second:",sec.listToArray())
-print("correct:",first.listToArray()+sec.listToArray())
-first.concat(sec)
-print("------------- concated --------------")
-print("concated:",first.listToArray())
-first.print_tree(first.root)
+	print("------------- concat function --------------")
+	first = lst
+	sec = self
+	print("first:",first.listToArray())
+	print("second:",sec.listToArray())
+	print("correct:",first.listToArray() + sec.listToArray())
+	print(first.concat(sec))
+	print("------------- concated --------------")
+	print("concated:",first.listToArray())
+	first.print_tree(first.root)
 print("---Finish----")
