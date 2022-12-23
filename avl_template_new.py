@@ -429,7 +429,6 @@ class AVLTreeList(object):
 			else:
 				succesor_delete_node.setRight(succesor_delete_node_right)
 
-
 			# Update succesor parent children 
 			if(delete_node_parent == None):
 				self.root = succesor_delete_node
@@ -449,7 +448,6 @@ class AVLTreeList(object):
 			
 			if(succesor_delete_node != new_first):
 				first_rotation_count = self.fixTree(succesor_delete_node.getPredecessor(), 0)
-
 			else:
 				first_rotation_count = self.fixTree(succesor_delete_node, 0)
 
@@ -563,47 +561,59 @@ class AVLTreeList(object):
 	@returns: the absolute value of the difference between the height of the AVL trees joined
 	"""
 	def concat(self, lst):
+		
 		if (self.length() == 0 and lst.length() == 0):
 			return 0
 
 		elif (self.length() == 0):
-			self = lst
-			return lst.length()
+			self.root = lst.root
+			self.size = lst.size
+			self.maxnode = lst.maxnode
+			return self.getRoot().getHeight() + 1
 
 		elif (lst.length() == 0):
-			return self.length()
-
-		elif (self.getRoot().getHeight() > lst.getRoot().getHeight()):
-			x_node = self.concat_fixed(True, self, lst)
-			self.fixTree(x_node, 0)
+			return self.getRoot().getHeight() + 1
+		
+		x_index = self.length()
+		height_diff = abs(self.getRoot().getHeight() - lst.getRoot().getHeight())
+	
+		if (self.getRoot().getHeight() > lst.getRoot().getHeight()):
+			b_node = self.concat_fixed(True, self, lst)
+			self.fixTree(b_node, 0)
 
 		else:
-			x_node = self.concat_fixed(False, lst, self)
+			b_node = self.concat_fixed(False, lst, self)
 			self.root = lst.getRoot()
-			self.fixTree(x_node, 0)
+			self.fixTree(b_node, 0)
+		#Update tree values
+		self.size += lst.length() + 1
+		self.maxnode = lst.maxnode
+		self.delete(x_index)
 
-		return abs(self.length() - lst.length())
-	
-	def concat_fixed(self,self_is_high,high,low):
-		# x_node is the relevant node in the highest tree so (self < x_node < lst)
+		return height_diff
+
+	def concat_fixed(self, self_is_high, high, low):
+		# b_node is the relevant node in the highest tree so (self < b_node < lst)
 
 		if (self_is_high):
-			x_node, x_index = high.find_node_in_correct_height(low.getRoot().getHeight(), False)
+			b_node, b_index = high.find_node_in_correct_height(low.getRoot().getHeight(), False)
 		else:
-			x_node, x_index = high.find_node_in_correct_height(low.getRoot().getHeight(), True)
-
-		x_node_parent = x_node.getParent()
-		high.delete(x_index)
+			b_node, b_index = high.find_node_in_correct_height(low.getRoot().getHeight(), True)
+		
+		x_node = AVLNode("temp_node")
+		c_node = b_node.getParent()
 
 		if (self_is_high):
 			x_node.setRight(low.getRoot())
-			x_node.setLeft(x_node_parent.getRight())
-			x_node_parent.setRight(x_node)
+			x_node.setLeft(b_node)
+			c_node.setRight(x_node)
+
 		else:
-			x_node.setLeft(low.root)
-			x_node.setRight(x_node_parent.getLeft())
-			x_node_parent.setLeft(x_node)
-		return x_node
+			x_node.setLeft(low.getRoot())
+			x_node.setRight(b_node)
+			c_node.setLeft(x_node)
+
+		return b_node
 
 	def find_node_in_correct_height(self, height, find_min):
 		#Find the max/min node with the correct height
@@ -622,6 +632,7 @@ class AVLTreeList(object):
 				node = node.getRight()
 		
 		return (node, index)
+
 
 	"""searches for a *value* in the list
 
