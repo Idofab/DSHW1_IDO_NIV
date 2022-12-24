@@ -825,7 +825,7 @@ class AVLTreeList(object):
 			self.root = father.getParent()
 			return counter
 
-		return self.fixTree(father.parent, counter)
+		return self.fixTree(father.getParent(), counter)
 	
 	def virtual_node(self, father):
 		node = AVLNode()
