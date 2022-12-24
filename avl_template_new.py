@@ -243,6 +243,13 @@ class AVLNode(object):
 
 		leftSon.setHeight(max(leftSon.getLeft().getHeight(), leftSon.getRight().getHeight()) + 1)
 		leftSon.rank = leftSon.left.rank + leftSon.right.rank + 1
+	
+	def setData(self):
+		self.rank = self.getLeft().rank + self.getRight().rank + 1
+		self.height = max(self.getLeft().getHeight(), self.getRight().getHeight()) + 1
+
+	
+	
 	"""
 	For Tester!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	"""
@@ -370,9 +377,10 @@ class AVLTreeList(object):
 				predecessor_node.setRight(insert_node)
 		
 		self.size += 1
-		rotate_number = self.fixTree(insert_node.parent, 0)
+		rotate_number = self.fixTree(False, insert_node.getParent())
 
 		return rotate_number
+
 
 	"""deletes the i'th item in the list
 	@type i: int
@@ -542,7 +550,7 @@ class AVLTreeList(object):
 				delete_node_parent.setRight(self.virtual_node(delete_node_parent))
 			
 			self.size -= 1			
-			rotation_count = self.fixTree(delete_node_parent, 0)
+			rotation_count = self.fixTree(True, delete_node_parent)
 		
 		# If delete node has only left child
 		elif(delete_node_right.rank == 0):
@@ -552,7 +560,7 @@ class AVLTreeList(object):
 				delete_node_parent.setRight(delete_node_left)
 			
 			self.size -= 1
-			rotation_count = self.fixTree(delete_node_parent, 0)
+			rotation_count = self.fixTree(True, delete_node_parent)
 
 		# If delete node has only right child
 		elif(delete_node_left.rank == 0):
@@ -562,7 +570,7 @@ class AVLTreeList(object):
 				delete_node_parent.setRight(delete_node_right)
 			
 			self.size -= 1
-			rotation_count = self.fixTree(delete_node_parent, 0)
+			rotation_count = self.fixTree(True, delete_node_parent)
 		
 		# If delete node is has two children
 		else:
@@ -571,15 +579,6 @@ class AVLTreeList(object):
 			rotation_count = self.delete(i+1)
 
 		return rotation_count
-	"""returns the value of the first item in the list
-	@rtype: str
-	@returns: the value of the first item, None if the list is empty
-	Complexity = O(1)
-	"""
-	def first(self):
-		if not(self.empty()):
-			return self.minnode.getValue()
-		return None
 	
 	"""returns the value of the last item in the list
 	@rtype: str
@@ -833,7 +832,55 @@ class AVLTreeList(object):
 		node.parent = father
 		return node
 	
+		def fixTree(self, is_delete,node):
+		rotation = 0
+		while node!=None:
+			node.setData()
+			if rotation == 0 or is_delete:
+				rotation += self.reBalance(node)
+			if node.getParent() == None:
+				self.root = node
+			node = node.getParent()
+		return rotation
+
 	
+	def fixTree(self, is_delete,node):
+		rotation = 0
+		while node!=None:
+			node.setData()
+			if rotation == 0 or is_delete:
+				rotation += self.reBalance(node)
+			if node.getParent() == None:
+				self.root = node
+			node = node.getParent()
+		return rotation
+
+	def reBalance(self, node):
+
+		balanceFactor = node.balanceFactor()
+		father_Parent = node.getParent()
+		if (-1 <= balanceFactor <= 1):
+			return 0
+
+		node_right = node.getRight()
+		node_left = node.getLeft()
+		if balanceFactor < -1:
+			if node_right.balanceFactor() <= 0:  # left
+				node.leftRotate()
+				return 1
+			else:  # right then left
+				node_right.rightRotate()
+				node.leftRotate()
+				return 2
+		elif balanceFactor > 1:
+			if node_left.balanceFactor() >= 0:  # right
+				node.rightRotate()
+				return 1
+			else:  # left then right
+				node_left.leftRotate()
+				node.rightRotate()
+				return 2
+
 	
 	
 
