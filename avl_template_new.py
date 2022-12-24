@@ -379,6 +379,7 @@ class AVLTreeList(object):
 				predecessor_node.setRight(insert_node)
 		
 		self.size += 1
+
 		rotate_number = self.fixTree(False, insert_node.getParent())
 		return rotate_number
 
@@ -441,7 +442,6 @@ class AVLTreeList(object):
 				delete_node_parent.setRight(self.virtual_node(delete_node_parent))
 			
 			self.size -= 1			
-
 			rotation_count = self.fixTree(True, delete_node_parent)
 		
 		# If delete node has only left child
@@ -452,7 +452,6 @@ class AVLTreeList(object):
 				delete_node_parent.setRight(delete_node_left)
 			
 			self.size -= 1
-
 			rotation_count = self.fixTree(True, delete_node_parent)
 
 		# If delete node has only right child
@@ -463,9 +462,8 @@ class AVLTreeList(object):
 				delete_node_parent.setRight(delete_node_right)
 			
 			self.size -= 1
-
 			rotation_count = self.fixTree(True, delete_node_parent)
-		
+	
 		# If delete node is has two children
 		if((delete_node_right_rank !=0) and (delete_node_left_rank != 0)):
 			delete_node_succesor = delete_node.getSuccessor()
@@ -473,6 +471,16 @@ class AVLTreeList(object):
 			rotation_count = self.delete(i+1)
 		
 		return rotation_count
+	
+	"""returns the value of the first item in the list
+	@rtype: str
+	@returns: the value of the first item, None if the list is empty
+	Complexity = O(1)
+	"""
+	def first(self):
+		if not(self.empty()):
+			return self.minnode.getValue()
+		return None
 	
 	"""returns the value of the last item in the list
 	@rtype: str
@@ -545,14 +553,15 @@ class AVLTreeList(object):
 				self.insert_sort(checkNode.left,node)
 			else:
 				checkNode.setLeft(node)
-				self.fixTree(node,0)
+				self.fixTree(False, node)
+
 				
 		else:
 			if (checkNode.getRight().isRealNode()):
 				self.insert_sort(checkNode.right,node)
 			else:
 				checkNode.setRight(node)
-				self.fixTree(node,0)
+				self.fixTree(False, node)
 		
 	"""permute the info values of the list 
 	@rtype: list
@@ -598,12 +607,12 @@ class AVLTreeList(object):
 	
 		if (self.getRoot().getHeight() > lst.getRoot().getHeight()):
 			b_node = self.concat_fixed(True, self, lst)
-			self.fixTree(b_node, 0)
+			self.fixTree(True, b_node)
 
 		else:
 			b_node = self.concat_fixed(False, lst, self)
 			self.root = lst.getRoot()
-			self.fixTree(b_node, 0)
+			self.fixTree(True, b_node)
 		
 		#Update tree values
 		self.size += lst.length() + 1
@@ -727,7 +736,7 @@ class AVLTreeList(object):
 		node.parent = father
 		return node
 	
-		def fixTree(self, is_delete,node):
+	def fixTree(self, is_delete,node):
 		rotation = 0
 		while node!=None:
 			node.setData()
