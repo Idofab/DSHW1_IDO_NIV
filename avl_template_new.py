@@ -380,11 +380,15 @@ class AVLTreeList(object):
 		
 		self.size += 1
 <<<<<<< HEAD
+<<<<<<< HEAD
 		rotate_number = self.fixTree(insert_node.parent, 0)
 =======
 		rotate_number = self.fixTree(False, insert_node.getParent())
 
 >>>>>>> 699bc12f814d22675dfe29fbce3d3d145c2d7036
+=======
+		rotate_number = self.fixTree(False, insert_node.getParent())
+>>>>>>> 90b56b76d1d115a7041e93095f22a89eeddfef7d
 		return rotate_number
 
 
@@ -447,9 +451,14 @@ class AVLTreeList(object):
 			
 			self.size -= 1			
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 			rotation_count = self.fixTree(True, delete_node_parent)
 >>>>>>> 699bc12f814d22675dfe29fbce3d3d145c2d7036
+=======
+
+			rotation_count = self.fixTree(True, delete_node_parent)
+>>>>>>> 90b56b76d1d115a7041e93095f22a89eeddfef7d
 		
 		# If delete node has only left child
 		elif(delete_node_right_rank == 0):
@@ -460,9 +469,14 @@ class AVLTreeList(object):
 			
 			self.size -= 1
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 			rotation_count = self.fixTree(True, delete_node_parent)
 >>>>>>> 699bc12f814d22675dfe29fbce3d3d145c2d7036
+=======
+
+			rotation_count = self.fixTree(True, delete_node_parent)
+>>>>>>> 90b56b76d1d115a7041e93095f22a89eeddfef7d
 
 		# If delete node has only right child
 		elif(delete_node_left_rank == 0):
@@ -473,12 +487,18 @@ class AVLTreeList(object):
 			
 			self.size -= 1
 <<<<<<< HEAD
+<<<<<<< HEAD
 		rotation_count = self.fixTree(delete_node_parent, 0)
 
 =======
 			rotation_count = self.fixTree(True, delete_node_parent)
 		
 >>>>>>> 699bc12f814d22675dfe29fbce3d3d145c2d7036
+=======
+
+			rotation_count = self.fixTree(True, delete_node_parent)
+		
+>>>>>>> 90b56b76d1d115a7041e93095f22a89eeddfef7d
 		# If delete node is has two children
 		if((delete_node_right_rank !=0) and (delete_node_left_rank != 0)):
 			delete_node_succesor = delete_node.getSuccessor()
