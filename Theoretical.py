@@ -6,7 +6,7 @@ import LinkedList as ll
 
 def q1():
 	ans_list = []
-	for i in [6]:
+	for i in range(10):
 		print(f'================i = {i + 1}===============')
 		print(f'Starting time {datetime.datetime.now()}')
 		start = time.time()
@@ -61,16 +61,30 @@ def q1():
 def q2():
 	for i in range(10):
 		K = 1500 * i
-		linked_list = ll.LinkedList()
-		theo_list = []
-		
+
+		########
 		avl_tree = avl.AVLTreeList()
 		avl_start = time.time()
 		for j in range(K):
 			avl_tree.insert(0, j)
-		
 		avl_end = time.time()
 		print(f"Avl tree time: {avl_end - avl_start}")
+		######
+		linked_list = ll.LinkedList()
+		ll_start = time.time()
+		for j in range(K):
+			linked_list.add_first(ll.Node(j))
+		ll_end = time.time()
+		print(f"Linked list time: {ll_end - ll_start}")
+		######
+		theo_list = []
+		list_start = time.time()
+		for j in range(K):
+			theo_list.insert(0, "new")
+		list_end = time.time()
+		print(f"Python list time: {list_end - list_start}")
+
+
 
 
 	return

@@ -472,6 +472,16 @@ class AVLTreeList(object):
 		
 		return rotation_count
 	
+	"""returns the value of the first item in the list
+	@rtype: str
+	@returns: the value of the first item, None if the list is empty
+	Complexity = O(1)
+	"""
+	def first(self):
+		if not(self.empty()):
+			return self.minnode.getValue()
+		return None
+	
 	"""returns the value of the last item in the list
 	@rtype: str
 	@returns: the value of the last item, None if the list is empty
