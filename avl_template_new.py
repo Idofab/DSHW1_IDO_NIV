@@ -5,6 +5,7 @@
 #name2    - Niv Sagie Tenenbaum  
 
 import random
+
 """A class represnting a node in an AVL tree"""
 
 class AVLNode(object):
@@ -345,6 +346,7 @@ class AVLTreeList(object):
 	Complexity: O(log n)
 	"""
 	def insert(self, i, val):
+
 		insert_node = AVLNode(val)
 		insert_node.setLeft(self.virtual_node(insert_node))
 		insert_node.setRight(self.virtual_node(insert_node))
@@ -378,7 +380,6 @@ class AVLTreeList(object):
 		
 		self.size += 1
 		rotate_number = self.fixTree(False, insert_node.getParent())
-
 		return rotate_number
 
 
@@ -390,120 +391,7 @@ class AVLTreeList(object):
 	@returns: the number of rebalancing operation due to AVL rebalancing
 	Complexity: O(log n)
 	"""
-	def delete2(self, i):
 		
-		# Check if the index is legal
-		if not(0 <= i < self.size):
-			return -1
-
-		# Special use cases = Tree.size < 2
-		if(self.size <= 2):
-			delete_node = self.retrieve_node(i)
-			if(self.size == 1):
-				self.size = 0
-				self.root = None
-				self.maxnode = None
-				self.minnode = None
-				return 0
-			elif(delete_node == self.root):
-				self.size = 1
-				if(delete_node.getLeft().rank == 0):
-					self.root = delete_node.getRight()
-				else:
-					self.root = delete_node.getLeft()
-				self.maxnode = self.root
-				self.minnode = self.root
-				self.root.setParent(None)
-				return 0
-
-		delete_node = self.retrieve_node(i)
-		delete_node_parent = delete_node.getParent()
-		delete_node_right = delete_node.getRight()
-		delete_node_left = delete_node.getLeft()
-		
-		if(delete_node == self.maxnode):
-			self.maxnode = delete_node.getPredecessor()
-		
-		new_first = self.retrieve_node(0)
-		if(i == 0):
-			new_first = self.retrieve_node(1)
-			self.minnode = new_first
-
-		self.size -= 1
-
-		# If delete node is leaf
-		if((delete_node_right.rank == 0) and (delete_node_left.rank == 0)):
-			if(delete_node_parent.getLeft() == delete_node):
-				delete_node_parent.setLeft(self.virtual_node(delete_node_parent))
-			else:
-				delete_node_parent.setRight(self.virtual_node(delete_node_parent))
-			
-			rotation_count = self.fixTree(delete_node_parent, 0)
-		
-		# If delete node has only left child
-		elif(delete_node_right.rank == 0):
-			if(delete_node_parent.getLeft() == delete_node):
-				delete_node_parent.setLeft(delete_node_left)
-			else:
-				delete_node_parent.setRight(delete_node_left)
-			
-			rotation_count = self.fixTree(delete_node_parent, 0)
-
-		# If delete node has only right child
-		elif(delete_node_left.rank == 0):
-			if(delete_node_parent.getLeft() == delete_node):
-				delete_node_parent.setLeft(delete_node_right)
-			else:
-				delete_node_parent.setRight(delete_node_right)
-
-			rotation_count = self.fixTree(delete_node_parent, 0)
-		
-		# If delete node is has two children
-		else:
-			succesor_delete_node = delete_node.getSuccessor()
-			succesor_delete_node_right = succesor_delete_node.getRight()
-			succesor_delete_node_parent = succesor_delete_node.getParent()
-
-			succesor_delete_node_parent.setLeft(succesor_delete_node_right)
-			succesor_delete_node.setParent(delete_node_parent)
-			succesor_delete_node.setLeft(delete_node_left)
-
-			# Check right child of delete node not the succesor 
-			if not(succesor_delete_node == delete_node_right):
-				succesor_delete_node.setRight(delete_node_right)
-			
-			else:
-				succesor_delete_node.setRight(succesor_delete_node_right)
-
-			# Update succesor parent children 
-			if(delete_node_parent == None):
-				self.root = succesor_delete_node
-			
-			else:
-				if(delete_node_parent.getLeft() == delete_node):
-					delete_node_parent.setLeft(succesor_delete_node)
-				
-				elif(delete_node_parent.getRight() == delete_node):
-					delete_node_parent.setRight(succesor_delete_node)
-
-			succesor_delete_node_parent.setHeight(max(succesor_delete_node_parent.getLeft().getHeight(), succesor_delete_node_parent.getRight().getHeight()) + 1)
-			succesor_delete_node_parent.rank = succesor_delete_node_parent.getRight().rank + succesor_delete_node_parent.getLeft().rank + 1
-			
-			succesor_delete_node.setHeight(max(succesor_delete_node.getLeft().getHeight(), succesor_delete_node.getRight().getHeight()) + 1)
-			succesor_delete_node.rank = succesor_delete_node.getRight().rank + succesor_delete_node.getLeft().rank + 1
-			
-			if(succesor_delete_node != new_first):
-				first_rotation_count = self.fixTree(succesor_delete_node.getPredecessor(), 0)
-			else:
-				first_rotation_count = self.fixTree(succesor_delete_node, 0)
-
-			if(succesor_delete_node == self.maxnode):
-				rotation_count = self.fixTree(succesor_delete_node, first_rotation_count)
-			else:
-				rotation_count = self.fixTree(succesor_delete_node.getSuccessor(), first_rotation_count)
-
-		return rotation_count
-	
 	def delete(self,i):
 		# Check if the index is legal
 		if not(0 <= i < self.size):
@@ -542,42 +430,48 @@ class AVLTreeList(object):
 			new_first = self.retrieve_node(1)
 			self.minnode = new_first
 
+		delete_node_right_rank = delete_node_right.rank
+		delete_node_left_rank = delete_node_left.rank
+		
 		# If delete node is leaf
-		if((delete_node_right.rank == 0) and (delete_node_left.rank == 0)):
+		if((delete_node_right_rank == 0) and (delete_node_left_rank == 0)):
 			if(delete_node_parent.getLeft() == delete_node):
 				delete_node_parent.setLeft(self.virtual_node(delete_node_parent))
 			else:
 				delete_node_parent.setRight(self.virtual_node(delete_node_parent))
 			
 			self.size -= 1			
+
 			rotation_count = self.fixTree(True, delete_node_parent)
 		
 		# If delete node has only left child
-		elif(delete_node_right.rank == 0):
+		elif(delete_node_right_rank == 0):
 			if(delete_node_parent.getLeft() == delete_node):
 				delete_node_parent.setLeft(delete_node_left)
 			else:
 				delete_node_parent.setRight(delete_node_left)
 			
 			self.size -= 1
+
 			rotation_count = self.fixTree(True, delete_node_parent)
 
 		# If delete node has only right child
-		elif(delete_node_left.rank == 0):
+		elif(delete_node_left_rank == 0):
 			if(delete_node_parent.getLeft() == delete_node):
 				delete_node_parent.setLeft(delete_node_right)
 			else:
 				delete_node_parent.setRight(delete_node_right)
 			
 			self.size -= 1
+
 			rotation_count = self.fixTree(True, delete_node_parent)
 		
 		# If delete node is has two children
-		else:
+		if((delete_node_right_rank !=0) and (delete_node_left_rank != 0)):
 			delete_node_succesor = delete_node.getSuccessor()
 			delete_node.value = delete_node_succesor.getValue()
 			rotation_count = self.delete(i+1)
-
+		
 		return rotation_count
 	
 	"""returns the value of the last item in the list
@@ -787,6 +681,7 @@ class AVLTreeList(object):
 	Complexity = O(log n)
 	"""
 	def fixTree(self, father, counter):
+
 		if(father == None):
 			return counter
 
