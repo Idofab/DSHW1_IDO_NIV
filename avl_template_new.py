@@ -13,6 +13,7 @@ class AVLNode(object):
 
 	@type value: str
 	@param value: data of your node
+	Complexity = O(1)
 	"""
 	def __init__(self, value= ""):
 		self.value = value
@@ -52,6 +53,8 @@ class AVLNode(object):
 	Complexity = O(1)
 	"""
 	def getValue(self):
+		if not (self.isRealNode()):
+			return None
 		return self.value
 
 	"""returns the height
@@ -62,7 +65,7 @@ class AVLNode(object):
 	def getHeight(self):
 		return self.height
 
-	"""sets left child
+	"""sets left child and updates node parent and self height
 	@type node: AVLNode
 	@param node: a node
 	Complexity = O(1)
@@ -72,7 +75,7 @@ class AVLNode(object):
 		node.setParent(self)
 		node.getParent().setHeight(node.getHeight() + 1)
 
-	"""sets right child
+	"""sets right child and updates node parent and self height
 	@type node: AVLNode
 	@param node: a node
 	Complexity = O(1)
@@ -98,7 +101,7 @@ class AVLNode(object):
 	def setValue(self, value):
 		self.value = value
 
-	"""sets the balance factor of the node
+	"""sets the height of the node
 	@type h: int
 	@param h: the height
 	Complexity = O(1)
@@ -125,11 +128,11 @@ class AVLNode(object):
 		
 		if(self.getLeft().rank != 0):
 			predecessor_node = self.getLeft()
-			while(predecessor_node.getRight().rank != 0):
+			while(predecessor_node.getRight().isRealNode()):
 				predecessor_node = predecessor_node.getRight()
 			return predecessor_node
 
-		elif((self.getLeft().rank == 0) and (self.getParent().getRight() == self)):
+		elif(not(self.getLeft().isRealNode()) and (self.getParent().getRight() == self)):
 			return self.getParent()
 		
 		elif(self.getParent().getLeft() == self):
@@ -148,13 +151,13 @@ class AVLNode(object):
 		if(self.getParent() == None) and (self.getRight().rank == 0):
 			return None
 	
-		if(self.getRight().rank != 0):
+		if(self.getRight().isRealNode()):
 			successor_node = self.getRight()
 			while(successor_node.getLeft().rank != 0):
 				successor_node = successor_node.getLeft()
 			return successor_node
 
-		elif((self.getRight().rank == 0) and (self.getParent().getLeft() == self)):
+		elif(not(self.getRight().isRealNode()) and (self.getParent().getLeft() == self)):
 			return self.getParent()
 		
 		elif(self.getParent().getRight() == self):
@@ -245,12 +248,14 @@ class AVLNode(object):
 		leftSon.setHeight(max(leftSon.getLeft().getHeight(), leftSon.getRight().getHeight()) + 1)
 		leftSon.rank = leftSon.left.rank + leftSon.right.rank + 1
 	
+	"""
+	Updates Node rank and height after tree change
+	Complexity = O(1)
+	"""
 	def setData(self):
 		self.rank = self.getLeft().rank + self.getRight().rank + 1
 		self.height = max(self.getLeft().getHeight(), self.getRight().getHeight()) + 1
 
-	
-	
 	"""
 	For Tester!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	"""
