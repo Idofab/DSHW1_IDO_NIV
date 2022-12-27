@@ -257,7 +257,7 @@ class AVLNode(object):
 		self.height = max(self.getLeft().getHeight(), self.getRight().getHeight()) + 1
 
 	"""
-	For Tester!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+	!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!For Tester!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	"""
 	def getSize(self):
 		return self.rank
@@ -573,16 +573,19 @@ class AVLTreeList(object):
 	@returns: an AVLTreeList where the values are permuted randomly by the info of the original list. ##Use Randomness
 	Complexity = O(nlogn)
 	"""
+	
 	def permutation(self):
 		perm_tree = AVLTreeList()
 		if(self.size == 0):
 			return perm_tree
 		tree_as_list = self.listToArray()
-		while 1 < len(tree_as_list):
+		cnt = 0
+		while cnt < len(tree_as_list):
 			rand_ind = random.randint(0, len(tree_as_list) - 1)
-			perm_tree.insert(0, tree_as_list[rand_ind])
-			tree_as_list.pop(rand_ind)
-		perm_tree.insert(0, tree_as_list[0])
+			if (tree_as_list[rand_ind] != None):
+				perm_tree.insert(0, tree_as_list[rand_ind])
+				cnt += 1
+			tree_as_list[rand_ind] = None
 		return perm_tree
 
 	"""concatenates lst to self
@@ -694,53 +697,6 @@ class AVLTreeList(object):
 	@returns: the number of rebalancing operation due to AVL rebalancing
 	Complexity = O(log n)
 	"""
-	def fixTree(self, father, counter):
-
-		if(father == None):
-			return counter
-
-		balanceFactor = father.balanceFactor()
-		father_Parent = father.getParent()
-		if (-1 <= balanceFactor <= 1):
-			father.setHeight(max(father.getLeft().getHeight(), father.getRight().getHeight()) + 1)
-			father.rank = father.getLeft().rank + father.getRight().rank + 1
-			counter += self.fixTree(father.getParent(), 0)
-		
-		rotate = False
-		if balanceFactor < -1:
-			if father.getRight().balanceFactor() <= 0: #left
-				father.leftRotate()
-				counter += 1
-			else: #right then left
-				father.getRight().rightRotate()
-				father.leftRotate()
-				counter += 2
-			rotate = True
-		elif balanceFactor > 1:
-			if father.getLeft().balanceFactor() >= 0: #right
-				father.rightRotate()
-				counter += 1
-			else: #left then right
-				father.getLeft().leftRotate()
-				father.rightRotate()
-				counter += 2
-			rotate = True
-
-		father.setHeight(max(father.getLeft().getHeight(), father.getRight().getHeight()) + 1)
-		father.rank = father.getLeft().rank + father.getRight().rank + 1
-		
-		if((father_Parent == None) and rotate):
-			self.root = father.getParent()
-			return counter
-
-		return self.fixTree(father.getParent(), counter)
-	
-	def virtual_node(self, father):
-		node = AVLNode()
-		node.rank = 0
-		node.parent = father
-		return node
-	
 	def fixTree(self, is_delete,node):
 		rotation = 0
 		while node!=None:
@@ -751,19 +707,7 @@ class AVLTreeList(object):
 				self.root = node
 			node = node.getParent()
 		return rotation
-
 	
-	def fixTree(self, is_delete,node):
-		rotation = 0
-		while node!=None:
-			node.setData()
-			if rotation == 0 or is_delete:
-				rotation += self.reBalance(node)
-			if node.getParent() == None:
-				self.root = node
-			node = node.getParent()
-		return rotation
-
 	def reBalance(self, node):
 
 		balanceFactor = node.balanceFactor()
@@ -789,14 +733,16 @@ class AVLTreeList(object):
 				node_left.leftRotate()
 				node.rightRotate()
 				return 2
-
 	
-	
-
+	def virtual_node(self, father):
+		node = AVLNode()
+		node.rank = 0
+		node.parent = father
+		return node
 	
 	
 	"""
-	For tester!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+	!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!For tester!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	"""
 	def print_tree(self, node):
 		if (node.height > 0):
@@ -810,12 +756,12 @@ class AVLTreeList(object):
 		if(node != None and node.right.rank != 0):
 			self.print_tree(node.right)
 	"""
-	For tester!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+	!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!For tester!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	"""
 	def append(self, val):
 		return self.insert(self.length(), val)
 	"""
-	For tester!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+	!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!For tester!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	"""
 	def getTreeHeight(self):
 		return self.getRoot().height
