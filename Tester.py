@@ -58,20 +58,20 @@ def build_tree(final_list, insert_list, index_order, P=True):
 	# Delete
 	delete_list = final_list
 
-	# for i in range(4):
-	# 	delete_ind = 2
-	# 	delete_list.pop(delete_ind)
-	# 	avl_tree.delete(delete_ind)
-	# 	if P:
-	# 		print(f'\n****After delete {i} tree*****')
-	# 		print_tree(avl_tree.root)
+	for i in range(4):
+		delete_ind = 2
+		delete_list.pop(delete_ind)
+		avl_tree.delete(delete_ind)
+		if P:
+			print(f'\n****After delete {i} tree*****')
+			print_tree(avl_tree.root)
 
-	# 	for i in range(len(delete_list)):
-	# 		if(avl_tree.retrieve(i) != (delete_list[i])):
-	# 			print(f'Error in delete test! i={i}: TreeNode value: {avl_tree.retrieve(i)}. List value (Real): {delete_list[i]}.')
+		for i in range(len(delete_list)):
+			if(avl_tree.retrieve(i) != (delete_list[i])):
+				print(f'Error in delete test! i={i}: TreeNode value: {avl_tree.retrieve(i)}. List value (Real): {delete_list[i]}.')
 	
-	# print(f'\n---After All delete tree---')
-	# print_tree(avl_tree.root)
+	print(f'\n---After All delete tree---')
+	print_tree(avl_tree.root)
 
 	# Permutation
 	for i in range(1):
@@ -115,8 +115,6 @@ build_tree(['A', 'B', 'C', 'D', 'E', 'F', 'G'], ['G', 'F', 'E', 'D', 'C', 'B', '
 build_tree(['A', 'B', 'C', 'D', 'E', 'F', 'G'], ['C', 'D', 'A', 'B', 'E', 'G', 'F'], [0, 1, 0, 1, 4, 5, 5], True)
 build_tree(['A', 'B', 'C', 'D', 'E', 'F', 'G'], ['C', 'A', 'B', 'E', 'D', 'G', 'F'], [0, 0, 1, 3, 3, 5, 5], True)
 build_tree(['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'], ['F', 'H', 'G', 'E', 'A', 'B', 'C', 'D'], [0, 1, 1, 0, 0, 1, 2, 3], True)
-build_tree(['B', 'A'], ['A', 'B'], [0, 0], True)
-build_tree(['A', 'B'], ['A', 'B'], [0, 1], True)
 
 
 print("---Finish----")
