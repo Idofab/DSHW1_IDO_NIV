@@ -376,11 +376,11 @@ class AVLTreeList(object):
 			self.maxnode = insert_node
 		
 		elif (i < self.size):
-			node_a = self.retrieve_node(i)
-			if (node_a.getLeft().rank == 0):
-				node_a.setLeft(insert_node)
+			node_i = self.retrieve_node(i)
+			if (node_i.getLeft().rank == 0):
+				node_i.setLeft(insert_node)
 			else:
-				predecessor_node = node_a.getPredecessor()
+				predecessor_node = node_i.getPredecessor()
 				predecessor_node.setRight(insert_node)
 		
 		self.size += 1
@@ -517,8 +517,9 @@ class AVLTreeList(object):
 		if not (node.isRealNode()):
 			return
 		self.in_order_rec(node.getLeft(), tree_array)
-		tree_array.append(node.value)
+		tree_array.append(node.getValue())
 		self.in_order_rec(node.getRight(), tree_array)
+	
 	"""returns the size of the list 
 	@rtype: int
 	@returns: the size of the list
@@ -530,7 +531,7 @@ class AVLTreeList(object):
 	"""sort the info values of the list
 	@rtype: list
 	@returns: an AVLTreeList where the values are sorted by the info of the original list.
-	Complexity = O(nlogn)
+	Complexity = O(n logn)
 	"""
 	def sort(self):
 		sorted_tree = AVLTreeList()
@@ -555,12 +556,10 @@ class AVLTreeList(object):
 	def insert_sort(self, checkNode, node):			
 		if checkNode.value > node.value:
 			if (checkNode.getLeft().isRealNode()):
-				self.insert_sort(checkNode.left,node)
+				self.insert_sort(checkNode.left, node)
 			else:
 				checkNode.setLeft(node)
-				self.fixTree(False, node)
-
-				
+				self.fixTree(False, node)	
 		else:
 			if (checkNode.getRight().isRealNode()):
 				self.insert_sort(checkNode.right,node)
@@ -571,7 +570,7 @@ class AVLTreeList(object):
 	"""permute the info values of the list 
 	@rtype: list
 	@returns: an AVLTreeList where the values are permuted randomly by the info of the original list. ##Use Randomness
-	Complexity = O(nlogn)
+	Complexity = O(n logn)
 	"""
 	
 	def permutation(self):
@@ -585,7 +584,7 @@ class AVLTreeList(object):
 			if (tree_as_list[rand_ind] != None):
 				perm_tree.insert(0, tree_as_list[rand_ind])
 				cnt += 1
-			tree_as_list[rand_ind] = None
+				tree_as_list[rand_ind] = None
 		return perm_tree
 
 	"""concatenates lst to self
@@ -692,54 +691,68 @@ class AVLTreeList(object):
 	def getRoot(self):
 		return self.root
 
-	"""Rebalancing the tree after change (insert, delete or concat)
+	"""Rebalancing the tree and updates nodes params after change (insert, delete or concat)
 	@rtype: int
 	@returns: the number of rebalancing operation due to AVL rebalancing
 	Complexity = O(log n)
 	"""
-	def fixTree(self, is_delete,node):
+	def fixTree(self, after_delete, node):
 		rotation = 0
-		while node!=None:
+		while node != None:
 			node.setData()
-			if rotation == 0 or is_delete:
+			if (rotation == 0) or after_delete:
 				rotation += self.reBalance(node)
 			if node.getParent() == None:
 				self.root = node
 			node = node.getParent()
 		return rotation
 	
+	"""Checking node's BF and making rotation if needed
+	@rtype: int
+	@returns: the number of rebalancing operation due to AVL rebalancing
+	Complexity = O(1)
+	"""
 	def reBalance(self, node):
 
 		balanceFactor = node.balanceFactor()
-		father_Parent = node.getParent()
+
 		if (-1 <= balanceFactor <= 1):
 			return 0
 
 		node_right = node.getRight()
 		node_left = node.getLeft()
 		if balanceFactor < -1:
-			if node_right.balanceFactor() <= 0:  # left
+			# Only left rotation
+			if node_right.balanceFactor() <= 0:
 				node.leftRotate()
 				return 1
-			else:  # right then left
+			# Right then left rotation
+			else:
 				node_right.rightRotate()
 				node.leftRotate()
 				return 2
+
 		elif balanceFactor > 1:
-			if node_left.balanceFactor() >= 0:  # right
+			# Only right rotation
+			if node_left.balanceFactor() >= 0:
 				node.rightRotate()
 				return 1
-			else:  # left then right
+			# Left then right rotation
+			else:
 				node_left.leftRotate()
 				node.rightRotate()
 				return 2
 	
+	"""Creating virtual node
+	@rtype: AVLNode
+	@returns: virtual node
+	Complexity = O(1)
+	"""
 	def virtual_node(self, father):
 		node = AVLNode()
 		node.rank = 0
 		node.parent = father
 		return node
-	
 	
 	"""
 	!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!For tester!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
